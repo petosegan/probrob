@@ -1,7 +1,7 @@
 import ogmap
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
+# import matplotlib.pyplot as plt
+# import matplotlib.cm as cm
 
 def find_nearest(array,value):
     idx = (np.abs(array-value)).argmin()
@@ -17,12 +17,12 @@ def ping_likelihood(pt, ping, this_map, this_sonar):
     
 def scan_loglikelihood(pt, scan, this_map, this_sonar):
     L = 0
-    for ping in scan:
+    for ping in scan.pings:
         L += np.log(ping_likelihood(pt, ping, this_map, this_sonar))
     return L
     
 if __name__ == "__main__":
-    plt.ion()
+    # plt.ion()
     # fig = plt.figure()
     
     test = ogmap.OGMap(100)
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     scan = this_sonar.simulate_scan(50, 50, test)
     # print scan
     
-    ll_N = 20
+    ll_N = 10
     xs = np.linspace(10, 90, ll_N)
     ys = np.linspace(10, 90, ll_N)
     ll = np.zeros((ll_N, ll_N))
@@ -44,6 +44,6 @@ if __name__ == "__main__":
         for j, ypos in np.ndenumerate(ys):
             # print i,j
             ll[i][j] = scan_loglikelihood((xpos,ypos), scan, test, this_sonar)
-    plt.imshow(ll, cmap=cm.Greys_r,interpolation = 'none', origin='lower')
-    plt.colorbar()
-    plt.draw()
+    # plt.imshow(ll, cmap=cm.Greys_r,interpolation = 'none', origin='lower')
+    # plt.colorbar()
+    # plt.draw()

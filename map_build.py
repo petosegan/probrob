@@ -1,6 +1,6 @@
 import ogmap
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 this_map = ogmap.OGMap(100)
 this_map.rect(95, 0, 10, 50)
@@ -20,8 +20,8 @@ for (xpos, ypos) in zip(x_traj, y_traj):
 xvar = 3
 yvar = 3    
 
-plt.ion()
-fig = plt.figure()
+# plt.ion()
+# fig = plt.figure()
 xs = []
 ys = []
 for scan in scans:
@@ -41,15 +41,14 @@ H = np.flipud(H)
 Hmax = np.max(np.max(H))
  
 # Mask zeros
-Hmasked = np.ma.masked_where(H<=.05*Hmax,H) # Mask pixels with low values
+# Hmasked = np.ma.masked_where(H<=.05*Hmax,H) # Mask pixels with low values
 
  
 # Plot 2D histogram using pcolor
-# fig2 = plt.figure()
-plt.pcolormesh(xedges,yedges,Hmasked)
-plt.xlabel('x')
-plt.ylabel('y')
-plt.xlim(0, this_map.N)
-plt.ylim(0, this_map.N)
-cbar = plt.colorbar()
-cbar.ax.set_ylabel('Counts')
+# plt.pcolormesh(xedges,yedges,Hmasked)
+# plt.xlabel('x')
+# plt.ylabel('y')
+# plt.xlim(0, this_map.N)
+# plt.ylim(0, this_map.N)
+# cbar = plt.colorbar()
+# cbar.ax.set_ylabel('Counts')
