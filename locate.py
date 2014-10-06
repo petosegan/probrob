@@ -1,49 +1,61 @@
+import os
 import ogmap
 import numpy as np
-# import matplotlib.pyplot as plt
-# import matplotlib.cm as cm
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 
 def find_nearest(array,value):
     idx = (np.abs(array-value)).argmin()
     return array[idx]
 
-def ping_likelihood(pt, ping, this_map, this_sonar):
+def ping_likelihood(pose, ping, this_map, this_sonar):
     ''' Calculate the probability of a sonar measurement at a location '''
-    (x0, y0) = pt
+    (x0, y0) = pose
     (theta, range) = ping
-    range_pdf = this_sonar.ping_pdf(x0, y0, theta, this_map)
+    range_pdf = this_map.ping_pdf(pose, theta, this_sonar)
     nearest_range_idx = (np.abs(this_sonar.rs - range)).argmin()
     return range_pdf[nearest_range_idx]
     
-def scan_loglikelihood(pt, scan, this_map, this_sonar):
+def scan_loglikelihood(pose, scan, this_map, this_sonar):
     L = 0
+    if this_map.grid[pose[1], pose[0]] == 0:
+        return -5000
     for ping in scan.pings:
-        L += np.log(ping_likelihood(pt, ping, this_map, this_sonar))
+        L += np.log(ping_likelihood(pose, ping, this_map, this_sonar))
     return L
     
 if __name__ == "__main__":
-    # plt.ion()
-    # fig = plt.figure()
+    from mapdef import mapdef, NTHETA
     
-    test = ogmap.OGMap(100)
-    test.rect(95, 0, 10, 50)
-    test.rect(0, 0, 10, 50)
-    test.rect(10, 70, 50, 10)
-
+    true_pose = (25, 25)
     
-    this_sonar = ogmap.Sonar()
+    this_sonar = ogmap.Sonar(NUM_THETA = NTHETA, GAUSS_VAR = 1)
+    this_map = mapdef()
+       
+    scan = this_sonar.simulate_scan(true_pose, this_map)
     
-    scan = this_sonar.simulate_scan(50, 50, test)
-    # print scan
-    
-    ll_N = 10
-    xs = np.linspace(10, 90, ll_N)
-    ys = np.linspace(10, 90, ll_N)
+    # Calculate likelihood at all points in grid
+    ll_N = 100
+    xs = np.linspace(0, this_map.N-1, ll_N)
+    ys = np.linspace(0, this_map.N-1, ll_N)
     ll = np.zeros((ll_N, ll_N))
     for i, xpos in np.ndenumerate(xs):
         for j, ypos in np.ndenumerate(ys):
-            # print i,j
-            ll[i][j] = scan_loglikelihood((xpos,ypos), scan, test, this_sonar)
-    # plt.imshow(ll, cmap=cm.Greys_r,interpolation = 'none', origin='lower')
-    # plt.colorbar()
-    # plt.draw()
+            ll[j][i] = scan_loglikelihood((xpos,ypos), scan, this_map, this_sonar)
+            
+    
+    ll_masked = np.ma.masked_where(ll==-5000,ll)
+    y0, x0 =  np.unravel_index(ll_masked.argmax(), ll_masked.shape)
+    ll_obstacles = np.ma.masked_where(ll > -4000, ll)
+    plt.ion()
+    fig = plt.figure()
+    fig.clf()
+    plt.imshow(ll_masked, cmap=cm.Greys_r,interpolation = 'none', origin='lower')
+    plt.colorbar()
+    plt.imshow(ll_obstacles, cmap=cm.Greens_r,interpolation = 'none', origin='lower')
+    plt.plot(true_pose[0], true_pose[1], '*', color='y', markersize=30)
+    plt.plot(x0, y0, '.', color = 'b', markersize = 20)
+    plt.plot(x0 + scan.rs*np.cos(scan.thetas), y0 + scan.rs*np.sin(scan.thetas), '.',color = 'r', markersize = 10)
+    plt.xlim(0, ll_N)
+    plt.ylim(0, ll_N)
+    plt.draw()
