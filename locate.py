@@ -3,6 +3,7 @@ import ogmap
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+from math import pi
 
 def find_nearest(array,value):
     idx = (np.abs(array-value)).argmin()
@@ -10,7 +11,6 @@ def find_nearest(array,value):
 
 def ping_likelihood(pose, ping, this_map, this_sonar):
     ''' Calculate the probability of a sonar measurement at a location '''
-    (x0, y0) = pose
     (theta, range) = ping
     range_pdf = this_map.ping_pdf(pose, theta, this_sonar)
     nearest_range_idx = (np.abs(this_sonar.rs - range)).argmin()
@@ -27,7 +27,8 @@ def scan_loglikelihood(pose, scan, this_map, this_sonar):
 if __name__ == "__main__":
     from mapdef import mapdef, NTHETA
     
-    true_pose = (25, 25)
+    true_pose = (25, 25, pi/2)
+    x0, y0, phi = true_pose
     
     this_sonar = ogmap.Sonar(NUM_THETA = NTHETA, GAUSS_VAR = 1)
     this_map = mapdef()
@@ -41,7 +42,7 @@ if __name__ == "__main__":
     ll = np.zeros((ll_N, ll_N))
     for i, xpos in np.ndenumerate(xs):
         for j, ypos in np.ndenumerate(ys):
-            ll[j][i] = scan_loglikelihood((xpos,ypos), scan, this_map, this_sonar)
+            ll[j][i] = scan_loglikelihood((xpos,ypos, pi/2), scan, this_map, this_sonar)
             
     
     ll_masked = np.ma.masked_where(ll==-5000,ll)
@@ -55,7 +56,7 @@ if __name__ == "__main__":
     plt.imshow(ll_obstacles, cmap=cm.Greens_r,interpolation = 'none', origin='lower')
     plt.plot(true_pose[0], true_pose[1], '*', color='y', markersize=30)
     plt.plot(x0, y0, '.', color = 'b', markersize = 20)
-    plt.plot(x0 + scan.rs*np.cos(scan.thetas), y0 + scan.rs*np.sin(scan.thetas), '.',color = 'r', markersize = 10)
-    plt.xlim(0, ll_N)
-    plt.ylim(0, ll_N)
+    plt.plot(x0 + scan.rs*np.cos(scan.thetas+phi), y0 + scan.rs*np.sin(scan.thetas+phi), '.',color = 'r', markersize = 10)
+    # plt.xlim(0, ll_N)
+    # plt.ylim(0, ll_N)
     plt.draw()

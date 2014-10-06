@@ -42,45 +42,46 @@ class OGMap():
         self.edges.append((x0, y0+height, x0+width, y0+height))
         self.grid[y0:y0+height, x0:x0+width] = 0
         
-    def ray_cast(self, x0, y0, theta, rmax):
-        ''' Returns the distance to the nearest occupied point at heading theta.
-        If no points are occupied along the ray, return rmax.'''
+    # def ray_cast(self, x0, y0, theta, rmax):
+        # ''' Returns the distance to the nearest occupied point at heading theta.
+        # If no points are occupied along the ray, return rmax.'''
         
-        theta = theta % (2*pi)
+        # theta = theta % (2*pi)
         
         # take care of special cases and get the ystep sign right
-        if theta == pi/2:
-            ystep = self.N
-        elif theta == -pi/2:
-            ystep = -self.N
-        else:
-            ystep = np.abs(np.tan(theta))*np.sign(np.sin(theta))            
+        # if theta == pi/2:
+            # ystep = self.N
+        # elif theta == -pi/2:
+            # ystep = -self.N
+        # else:
+            # ystep = np.abs(np.tan(theta))*np.sign(np.sin(theta))            
             
         # get the xstep sign right
-        if theta < pi/2 or theta > 3*pi/2:
-            xend = self.N
-            xstep = 1
-        else:
-            xend = 0
-            xstep = -1
+        # if theta < pi/2 or theta > 3*pi/2:
+            # xend = self.N
+            # xstep = 1
+        # else:
+            # xend = 0
+            # xstep = -1
             
-        y_this = y0
+        # y_this = y0
         
         # follow a ray until you hit an occupied square or go out of the map
-        for x in np.arange(x0, xend, xstep):
-            for y in np.arange(y_this, y_this+ystep, np.sign(ystep)):
-                if y >= self.N or y < 0:
-                    return rmax
-                elif self.grid[y, int(x)] == 0:
-                    return min(np.sqrt((x-x0)**2 + (y-y0)**2), rmax)
-            y_this = y_this + ystep
-        return rmax
+        # for x in np.arange(x0, xend, xstep):
+            # for y in np.arange(y_this, y_this+ystep, np.sign(ystep)):
+                # if y >= self.N or y < 0:
+                    # return rmax
+                # elif self.grid[y, int(x)] == 0:
+                    # return min(np.sqrt((x-x0)**2 + (y-y0)**2), rmax)
+            # y_this = y_this + ystep
+        # return rmax
     
     def ray_trace(self, pose, theta, rmax):
         ''' Test for intersection of a ray with edges in the map'''
         dists = []
-        p = pose
-        s = (np.cos(theta), np.sin(theta))
+        x0, y0, phi = pose
+        p = (x0, y0)
+        s = (np.cos(theta + phi), np.sin(theta + phi))
         for edge in self.edges:
             r = (edge[0], edge[1])
             q = (edge[2] - edge[0], edge[3] - edge[1])
@@ -112,7 +113,8 @@ class OGMap():
     
     def ray_plot(self, pose, theta, rmax):
         '''Plot the map with a ray cast from (x0, y0) with heading theta'''
-        x0, y0 = pose
+        x0, y0,phi = pose
+        theta = theta+phi
         ray_len = self.ray_trace(pose, theta, rmax)
         plt.imshow(self.grid, interpolation = 'none', cmap = cm.Greys_r, origin='lower')
         plt.plot(x0, y0, '.', color='b', markersize = 20)
@@ -122,9 +124,9 @@ class OGMap():
         plt.draw()
         
     def sonar_simulate(self, pose, sonar, PLOT_ON = False):
-        ''' Produce a simulation of a sonar reading from point (x0, y0) '''
-        x0, y0 = pose
-        theta = np.linspace(0, 2*pi, sonar.NUM_THETA) #headings
+        ''' Produce a simulation of a sonar reading from point (x0, y0) with orientation phi'''
+        x0, y0, phi = pose
+        theta = np.linspace(0, 2*pi, sonar.NUM_THETA)#headings
         r = np.linspace(0, sonar.RMAX, sonar.NUM_THETA) #radius
         r_meas = []
         
@@ -154,7 +156,7 @@ class OGMap():
         if PLOT_ON:
             ax = plt.subplot(111)
             plt.imshow(self.grid, interpolation = 'none', cmap = cm.Greys_r, origin='lower')
-            plt.plot(x0+r_meas*np.cos(theta), y0+r_meas*np.sin(theta), '.', color='r')
+            plt.plot(x0+r_meas*np.cos(theta+phi), y0+r_meas*np.sin(theta+phi), '.', color='r')
             plt.plot(x0, y0, '.', color='b', markersize = 20) 
             plt.xlim(0, self.N)
             plt.ylim(0, self.N)
@@ -178,7 +180,7 @@ class OGMap():
             print '%d out of %d'%(x, self.N)
             for y_idx, y in np.ndenumerate(ys):
                 for th_idx, th in np.ndenumerate(self.cache_thetas):
-                    traces[x_idx][y_idx][th_idx] = self.ray_trace(x, y, th, RMAX)
+                    traces[x_idx][y_idx][th_idx] = self.ray_trace((x, y, th),  0, RMAX)
         
         np.save(filename, traces)
         f.close()
@@ -192,14 +194,14 @@ class OGMap():
         return r_meas
         
     def ping_pdf(self, pose, th, this_sonar):
-        x0, y0 = pose
+        x0, y0, phi = pose
         # print 'pinging'
         # if self.grid[y_idx, x_idx] == 0:
             # return this_sonar.p_min
         if self.TRACES_CACHED:
             x_idx = np.argmin(abs(self.xs - x0))
             y_idx = np.argmin(abs(self.ys - y0))
-            th_idx = np.argmin(abs(self.cache_thetas - th))
+            th_idx = np.argmin(abs(self.cache_thetas - (th + phi)))
             true_r = self.cache[x_idx][y_idx][th_idx]
             # print 'used cache file'
         else:
@@ -257,17 +259,18 @@ class Sonar():
         
     def simulate_scan(self, pose, this_map, PLOT_ON = False):
         ''' Produce a simulation of a sonar reading from point (x0, y0) '''
-        theta = self.thetas #headings
+        x0, y0, phi = pose
+        theta = self.thetas#headings
         r = self.rs #radius
         r_meas = []
         
         for th in theta:
-            r_meas.append(this_map.simulate_ping(pose, th, self))
+            r_meas.append(self.simulate_ping(pose, th, this_map))
         
         if PLOT_ON:
             ax = plt.subplot(111)
             plt.imshow(this_map.grid, interpolation = 'none', cmap = cm.Greys_r, origin='lower')
-            plt.plot(x0+r_meas*np.cos(theta), y0+r_meas*np.sin(theta), '.', color='r')
+            plt.plot(x0+r_meas*np.cos(theta + phi), y0+r_meas*np.sin(theta+phi), '.', color='r')
             plt.plot(x0, y0, '.', color='b', markersize = 20) 
             plt.xlim(0, this_map.N)
             plt.ylim(0, this_map.N)
@@ -283,30 +286,34 @@ class Sonar():
         return r_meas
         
     def ping_pdf(self, pose, th, this_map):
-        x0, y0 = pose
-        if this_map.grid[y0, x0] == 0:
-            return self.p_min
-        true_r = this_map.ray_trace(pose, th, self.RMAX)
-        if true_r < self.RMAX:
-            p_gauss = np.exp(-0.5*(self.rs - true_r)**2 / self.GAUSS_VAR)
-            w_max = self.w_max_hit
-        else:
-            p_gauss = np.zeros(len(self.rs))
-            w_max = self.w_max_miss
+        return this_map.ping_pdf(pose, th, self)
+        # x0, y0, phi = pose
+        # x_idx = np.argmin(abs(this_map.xs - x0))
+        # y_idx = np.argmin(abs(this_map.ys - y0))
+        # if this_map.grid[y_idx, x_idx] == 0:
+            # return self.p_min
+        # true_r = this_map.ray_trace(pose, th, self.RMAX)
+        # if true_r < self.RMAX:
+            # p_gauss = np.exp(-0.5*(self.rs - true_r)**2 / self.GAUSS_VAR)
+            # w_max = self.w_max_hit
+        # else:
+            # p_gauss = np.zeros(len(self.rs))
+            # w_max = self.w_max_miss
 
         # weighted total probability
-        p_tot = self.w_gauss * p_gauss + w_max * self.p_max + self.p_tot_partial
+        # p_tot = self.w_gauss * p_gauss + w_max * self.p_max + self.p_tot_partial
         # normalize
-        p_tot /= (np.sum(p_tot))
+        # p_tot /= (np.sum(p_tot))
         # sample
-        return p_tot
+        # return p_tot
         
 class Scan():
     def __init__(self, pose, thetas, rs):
         self.pose = pose
-        x0, y0 = pose
+        x0, y0, phi = pose
         self.x0 = x0
         self.y0 = y0
+        self.phi = phi
         self.thetas = thetas
         self.rs = rs
         self.pings = zip(self.thetas, self.rs)
@@ -314,9 +321,10 @@ class Scan():
 if __name__ == "__main__":
     from mapdef import mapdef, NTHETA
     this_map = mapdef()
-    this_sonar = Sonar(NUM_THETA = NTHETA, GAUSS_VAR = 1)
+    this_sonar = Sonar(NUM_THETA = 200, GAUSS_VAR = 1)
     
     plt.ion()
     this_map.show()
-    for xpos in np.linspace(0, 80, 10):
-        this_map.sonar_simulate((xpos, 60), this_sonar, PLOT_ON = True)
+    # for xpos in np.linspace(0, 80, 10):
+    # this_map.sonar_simulate((50, 50, 90*pi/180), this_sonar, PLOT_ON = True)
+    this_sonar.simulate_scan((50,50,10*pi/180), this_map, PLOT_ON = True)
