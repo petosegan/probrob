@@ -21,15 +21,14 @@ class Robot():
         self.goal = (25, 25, pi)
         
     def command(self, control_x, control_v):
-        self.ensemble.blind_particle_filter(control_x, control_v)
+        self.ensemble.pf_update(control_x, control_v)
     
     def measure(self):
         scan = self.sonar.simulate_scan(self.pose, self.this_map)
         self.last_scan = scan
-        self.ensemble.particle_filter_sonar(scan, self.sonar, self.this_map)
+        self.ensemble.pf_sonar(scan, self.sonar, self.this_map)
         
     def control_policy(self):
-        # idx_guess = np.random.choice(range(self.ensemble.N), p=self.ensemble.weight)
         idx_guess = np.argmax(self.ensemble.weight)
         pos_guess = self.ensemble.x_ens[:, idx_guess]
         vel_guess = self.ensemble.v_ens[:, idx_guess]
@@ -40,9 +39,7 @@ class Robot():
         phi_des = np.arctan2(vy_des, vx_des)
         phi_guess = (pos_guess[2] % 2*pi) - pi
         vel_des_pol = (0.1, .1*(phi_des - phi_guess))
-        # control_x = np.reshape(np.sign(self.goal - pos_guess), (3, 1))
         control_x = np.array([[0],[0],[0]])
-        # control_v = np.array([[0],[0]])
         control_v = np.reshape(vel_des_pol - vel_guess, (2, 1))
         x0, y0, phi = self.pose
         vr, omega = self.vel

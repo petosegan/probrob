@@ -29,7 +29,6 @@ class OGMap():
             self.cache_thetas = []
         
     def show(self):
-        # ax = fig.add_subplot(111)
         plt.imshow(self.grid, interpolation = 'none', cmap = cm.Greys_r, origin='lower')
         plt.draw()
         
@@ -42,40 +41,6 @@ class OGMap():
         self.edges.append((x0, y0+height, x0+width, y0+height))
         self.grid[y0:y0+height, x0:x0+width] = 0
         
-    # def ray_cast(self, x0, y0, theta, rmax):
-        # ''' Returns the distance to the nearest occupied point at heading theta.
-        # If no points are occupied along the ray, return rmax.'''
-        
-        # theta = theta % (2*pi)
-        
-        # take care of special cases and get the ystep sign right
-        # if theta == pi/2:
-            # ystep = self.N
-        # elif theta == -pi/2:
-            # ystep = -self.N
-        # else:
-            # ystep = np.abs(np.tan(theta))*np.sign(np.sin(theta))            
-            
-        # get the xstep sign right
-        # if theta < pi/2 or theta > 3*pi/2:
-            # xend = self.N
-            # xstep = 1
-        # else:
-            # xend = 0
-            # xstep = -1
-            
-        # y_this = y0
-        
-        # follow a ray until you hit an occupied square or go out of the map
-        # for x in np.arange(x0, xend, xstep):
-            # for y in np.arange(y_this, y_this+ystep, np.sign(ystep)):
-                # if y >= self.N or y < 0:
-                    # return rmax
-                # elif self.grid[y, int(x)] == 0:
-                    # return min(np.sqrt((x-x0)**2 + (y-y0)**2), rmax)
-            # y_this = y_this + ystep
-        # return rmax
-    
     def ray_trace(self, pose, theta, rmax):
         ''' Test for intersection of a ray with edges in the map'''
         dists = []
@@ -287,25 +252,6 @@ class Sonar():
         
     def ping_pdf(self, pose, th, this_map):
         return this_map.ping_pdf(pose, th, self)
-        # x0, y0, phi = pose
-        # x_idx = np.argmin(abs(this_map.xs - x0))
-        # y_idx = np.argmin(abs(this_map.ys - y0))
-        # if this_map.grid[y_idx, x_idx] == 0:
-            # return self.p_min
-        # true_r = this_map.ray_trace(pose, th, self.RMAX)
-        # if true_r < self.RMAX:
-            # p_gauss = np.exp(-0.5*(self.rs - true_r)**2 / self.GAUSS_VAR)
-            # w_max = self.w_max_hit
-        # else:
-            # p_gauss = np.zeros(len(self.rs))
-            # w_max = self.w_max_miss
-
-        # weighted total probability
-        # p_tot = self.w_gauss * p_gauss + w_max * self.p_max + self.p_tot_partial
-        # normalize
-        # p_tot /= (np.sum(p_tot))
-        # sample
-        # return p_tot
         
 class Scan():
     def __init__(self, pose, thetas, rs):
@@ -325,6 +271,4 @@ if __name__ == "__main__":
     
     plt.ion()
     this_map.show()
-    # for xpos in np.linspace(0, 80, 10):
-    # this_map.sonar_simulate((50, 50, 90*pi/180), this_sonar, PLOT_ON = True)
     this_sonar.simulate_scan((50,50,10*pi/180), this_map, PLOT_ON = True)
