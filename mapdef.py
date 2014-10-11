@@ -1,7 +1,7 @@
 import ogmap
 import os
 
-NTHETA = 10 # Number of angles in scan
+NTHETA = 200 # Number of angles in scan
 
 def mapdef():
 

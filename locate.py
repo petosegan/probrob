@@ -12,7 +12,7 @@ def find_nearest(array,value):
 def ping_likelihood(pose, ping, this_map, this_sonar):
     ''' Calculate the probability of a sonar measurement at a location '''
     (theta, range) = ping
-    range_pdf = this_map.ping_pdf(pose, theta, this_sonar)
+    range_pdf = this_sonar.ping_pdf(pose, theta, this_map)
     nearest_range_idx = (np.abs(this_sonar.rs - range)).argmin()
     return range_pdf[nearest_range_idx]
     
@@ -56,7 +56,7 @@ def loglike_map(pose, scan, this_map, this_sonar,ll_N = 100, PLOT_ON = False):
 if __name__ == "__main__":
     from mapdef import mapdef, NTHETA
     
-    true_pose = (25, 25, 0)
+    true_pose = (50,50, 0)
     x0, y0, phi = true_pose
     phi_guess = phi
     

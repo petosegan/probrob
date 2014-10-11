@@ -1,3 +1,5 @@
 *.pdf
 *.profile
 *.pyc
+mapchange.time
+trace_cache.npy

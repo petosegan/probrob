@@ -93,7 +93,7 @@ if __name__ == "__main__":
     true_pose = (50,50, 0)
     
     this_ens = Ensemble(pose = true_pose)
-    this_sonar = ogmap.Sonar(NUM_THETA = NTHETA, GAUSS_VAR = 1)
+    this_sonar = ogmap.Sonar(NUM_THETA = 10, GAUSS_VAR = 1)
     this_map = mapdef()
     
       

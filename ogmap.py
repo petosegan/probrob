@@ -10,14 +10,14 @@ def cross(a, b):
     return a[0]*b[1] - a[1]*b[0]
 
 class OGMap():
-    def __init__(self, N):
+    def __init__(self, N, cache_file = 'trace_cache.npy'):
         self.N = N
         self.xs = np.array(range(self.N))
         self.ys = np.array(range(self.N))
         self.grid = np.ones((N,N), dtype=bool)
         self.edges = []
         self.rects = []
-        self.cache_file = 'trace_cache.npy'
+        self.cache_file = cache_file
         if os.path.isfile(self.cache_file):
             self.cache = np.load(self.cache_file)
             self.TRACES_CACHED = True
@@ -88,48 +88,6 @@ class OGMap():
         plt.ylim((0,self.N))
         plt.draw()
         
-    def sonar_simulate(self, pose, sonar, PLOT_ON = False):
-        ''' Produce a simulation of a sonar reading from point (x0, y0) with orientation phi'''
-        x0, y0, phi = pose
-        theta = np.linspace(0, 2*pi, sonar.NUM_THETA)#headings
-        r = np.linspace(0, sonar.RMAX, sonar.NUM_THETA) #radius
-        r_meas = []
-        
-        # probability densities
-        p_exp = np.exp(-r / sonar.EXP_LEN)
-        p_uni = np.ones(len(r))
-        p_max = np.zeros(len(r))
-        p_max[-1] = 1
-        p_min = np.zeros(len(r))
-        p_min[0] = 1
-
-        for th in theta:
-            true_r = self.ray_trace(pose, th, sonar.RMAX)
-            if true_r < sonar.RMAX:
-                p_gauss = np.exp(-0.5*(r - true_r)**2 / sonar.GAUSS_VAR)
-                w_max = sonar.w_max_hit
-            else:
-                p_gauss = np.zeros(len(r))
-                w_max = sonar.w_max_miss
-
-            # weighted total probability
-            p_tot = sonar.w_exp * p_exp + sonar.w_gauss * p_gauss + sonar.w_uni * p_uni + w_max * p_max + sonar.w_min*p_min
-            # normalize
-            p_tot /= (np.sum(p_tot))
-            # sample
-            r_meas.append(np.random.choice(r, p=p_tot))
-        if PLOT_ON:
-            ax = plt.subplot(111)
-            plt.imshow(self.grid, interpolation = 'none', cmap = cm.Greys_r, origin='lower')
-            plt.plot(x0+r_meas*np.cos(theta+phi), y0+r_meas*np.sin(theta+phi), '.', color='r')
-            plt.plot(x0, y0, '.', color='b', markersize = 20) 
-            plt.xlim(0, self.N)
-            plt.ylim(0, self.N)
-            plt.title('Simulated Sonar Scan')
-            plt.draw()
-        
-        return (theta, r_meas)
-        
     def cache_traces(self, filename, NUM_THETA = 8, RMAX = 100):
         
         f = open(filename, 'w')
@@ -149,45 +107,7 @@ class OGMap():
         
         np.save(filename, traces)
         f.close()
-        self.CACHED = True
-        
-            
-    def simulate_ping(self, pose, th, this_sonar):
-        p_tot = self.ping_pdf(pose, th, this_sonar)
-        # sample
-        r_meas = np.random.choice(this_sonar.rs, p=p_tot)
-        return r_meas
-        
-    def ping_pdf(self, pose, th, this_sonar):
-        x0, y0, phi = pose
-        # print 'pinging'
-        # if self.grid[y_idx, x_idx] == 0:
-            # return this_sonar.p_min
-        if self.TRACES_CACHED:
-            x_idx = np.argmin(abs(self.xs - x0))
-            y_idx = np.argmin(abs(self.ys - y0))
-            th_idx = np.argmin(abs(self.cache_thetas - (th + phi)))
-            true_r = self.cache[x_idx][y_idx][th_idx]
-            # print 'used cache file'
-        else:
-            true_r = self.ray_trace(pose, th, this_sonar.RMAX)
-            # print 'calculated ray trace'
-        if true_r < this_sonar.RMAX:
-            p_gauss = np.exp(-0.5*(this_sonar.rs - true_r)**2 / this_sonar.GAUSS_VAR)
-            w_gauss = this_sonar.w_gauss
-            w_max = this_sonar.w_max_hit
-        else:
-            p_gauss = 0
-            w_gauss = 0
-            w_max = this_sonar.w_max_miss
-
-        # weighted total probability
-        p_tot = w_gauss * p_gauss + w_max * this_sonar.p_max + this_sonar.p_tot_partial
-        # normalize
-        p_tot /= (np.sum(p_tot))
-        # sample
-        return p_tot
-                    
+        self.CACHED = True                    
         
 
 class Sonar():
@@ -237,8 +157,8 @@ class Sonar():
             plt.imshow(this_map.grid, interpolation = 'none', cmap = cm.Greys_r, origin='lower')
             plt.plot(x0+r_meas*np.cos(theta + phi), y0+r_meas*np.sin(theta+phi), '.', color='r')
             plt.plot(x0, y0, '.', color='b', markersize = 20) 
-            plt.xlim(0, this_map.N)
-            plt.ylim(0, this_map.N)
+            # plt.xlim(0, this_map.N)
+            # plt.ylim(0, this_map.N)
             plt.title('Simulated Sonar Scan')
             plt.draw()
         
@@ -251,7 +171,29 @@ class Sonar():
         return r_meas
         
     def ping_pdf(self, pose, th, this_map):
-        return this_map.ping_pdf(pose, th, self)
+        x0, y0, phi = pose
+        if this_map.TRACES_CACHED:
+            x_idx = np.argmin(abs(this_map.xs - x0))
+            y_idx = np.argmin(abs(this_map.ys - y0))
+            th_idx = np.argmin(abs((this_map.cache_thetas - (th + phi))%(2*pi)))
+            true_r = this_map.cache[x_idx][y_idx][th_idx]
+        else:
+            true_r = this_map.ray_trace(pose, th, self.RMAX)
+        if true_r < self.RMAX:
+            p_gauss = np.exp(-0.5*(self.rs - true_r)**2 / self.GAUSS_VAR)
+            w_gauss = self.w_gauss
+            w_max = self.w_max_hit
+        else:
+            p_gauss = 0
+            w_gauss = 0
+            w_max = self.w_max_miss
+
+        # # weighted total probability
+        p_tot = w_gauss * p_gauss + w_max * self.p_max + self.p_tot_partial
+        # # normalize
+        p_tot /= (np.sum(p_tot))
+        # # sample
+        return p_tot
         
 class Scan():
     def __init__(self, pose, thetas, rs):
@@ -268,7 +210,8 @@ if __name__ == "__main__":
     from mapdef import mapdef, NTHETA
     this_map = mapdef()
     this_sonar = Sonar(NUM_THETA = 200, GAUSS_VAR = 1)
+    pose = (50,50,0)
     
     plt.ion()
     this_map.show()
-    this_sonar.simulate_scan((50,50,10*pi/180), this_map, PLOT_ON = True)
+    this_sonar.simulate_scan(pose, this_map, PLOT_ON = True)

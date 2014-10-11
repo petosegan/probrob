@@ -16,7 +16,7 @@ class Robot():
         self.sonar = sonar
         self.ensemble = ensemble
         
-        self.control_std = 0.0001
+        self.control_std = 0.01
         
         self.goal = (25, 25, pi)
         
@@ -37,8 +37,8 @@ class Robot():
         vx_des = vel_des_rect[0]
         vy_des = vel_des_rect[1]
         phi_des = np.arctan2(vy_des, vx_des)
-        phi_guess = (pos_guess[2] % 2*pi) - pi
-        vel_des_pol = (0.1, .1*(phi_des - phi_guess))
+        phi_guess = pos_guess[2]
+        vel_des_pol = (3, .3*(phi_des%(2*pi) - phi_guess%(2*pi)))
         control_x = np.array([[0],[0],[0]])
         control_v = np.reshape(vel_des_pol - vel_guess, (2, 1))
         x0, y0, phi = self.pose
@@ -63,8 +63,8 @@ class Robot():
 if __name__ == "__main__":
     true_pose = (75, 60, pi)
     this_map = mapdef()
-    this_sonar = ogmap.Sonar(NUM_THETA = NTHETA, GAUSS_VAR = 1)
-    this_ens = mcl.Ensemble(pose = true_pose, acc_var = np.array([[1],[1]]))
+    this_sonar = ogmap.Sonar(NUM_THETA = 10, GAUSS_VAR = 1)
+    this_ens = mcl.Ensemble(pose = true_pose, acc_var = np.array([[.001],[.001]]))
     this_robot = Robot(true_pose, this_map, this_sonar, this_ens)
     plt.ion()
     this_robot.automate()
