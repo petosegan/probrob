@@ -44,13 +44,21 @@ class Robot():
         x0, y0, phi = self.pose
         vr, omega = self.vel
         self.dx = (vr*np.cos(phi), vr*np.sin(phi), omega)
-        self.pose = self.pose + self.dx + control_x + np.random.normal(0,self.control_std, (3, 1))
+        self.pose = self.pose + self.dx + control_x \
+            + np.random.normal(0,self.control_std, (3, 1))
         self.vel = self.vel + control_v
         return (control_x, control_v)
     
     def show_state(self):
-        this_ens.show_map_scan(col = 'b', scan = self.last_scan, this_map = self.this_map, pose = self.pose)
-        plt.plot(self.goal[0], self.goal[1], '*', color='r', markersize = 20)
+        this_ens.show_map_scan(col = 'b'
+                            , scan = self.last_scan
+                            , this_map = self.this_map
+                            , pose = self.pose
+                            )
+        plt.plot(self.goal[0]
+                , self.goal[1]
+                , '*', color='r'
+                , markersize = 20)
         plt.draw()
     
     def automate(self, numsteps = 100):
@@ -64,7 +72,8 @@ if __name__ == "__main__":
     true_pose = (75, 60, pi)
     this_map = mapdef()
     this_sonar = ogmap.Sonar(NUM_THETA = 10, GAUSS_VAR = 1)
-    this_ens = mcl.Ensemble(pose = true_pose, acc_var = np.array([[.001],[.001]]))
+    this_ens = mcl.Ensemble(pose = true_pose
+                        , acc_var = np.array([[.001],[.001]]))
     this_robot = Robot(true_pose, this_map, this_sonar, this_ens)
     plt.ion()
     this_robot.automate()

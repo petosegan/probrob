@@ -10,7 +10,8 @@ def find_nearest(array,value):
     return array[idx]
 
 def ping_likelihood(pose, ping, this_map, this_sonar):
-    ''' Calculate the probability of a sonar measurement at a location '''
+    ''' Calculate the probability of a sonar measurement at a location,
+        given a pose and map'''
     (theta, range) = ping
     range_pdf = this_sonar.ping_pdf(pose, theta, this_map)
     nearest_range_idx = (np.abs(this_sonar.rs - range)).argmin()
@@ -24,7 +25,8 @@ def scan_loglikelihood(pose, scan, this_map, this_sonar):
         L += np.log(ping_likelihood(pose, ping, this_map, this_sonar))
     return L
     
-def loglike_map(pose, scan, this_map, this_sonar,ll_N = 100, PLOT_ON = False):
+def loglike_map(pose, scan, this_map, this_sonar,ll_N = 100
+                , PLOT_ON = False):
     ''' Calculate likelihood at all points in grid'''
     x0, y0, phi = pose
     phi_guess = phi
@@ -34,7 +36,11 @@ def loglike_map(pose, scan, this_map, this_sonar,ll_N = 100, PLOT_ON = False):
     ll = np.zeros((ll_N, ll_N))
     for i, xpos in np.ndenumerate(xs):
         for j, ypos in np.ndenumerate(ys):
-            ll[j][i] = scan_loglikelihood((xpos,ypos, phi_guess), scan, this_map, this_sonar)
+            ll[j][i] = scan_loglikelihood((xpos,ypos, phi_guess)
+                                        , scan
+                                        , this_map
+                                        , this_sonar
+                                        )
             
     if PLOT_ON:
         ll_masked = np.ma.masked_where(np.isnan(ll),ll)
@@ -43,18 +49,33 @@ def loglike_map(pose, scan, this_map, this_sonar,ll_N = 100, PLOT_ON = False):
         plt.ion()
         fig = plt.figure()
         fig.clf()
-        plt.imshow(ll_masked, cmap=cm.Greys_r,interpolation = 'none', origin='lower')
+        plt.imshow(ll_masked, cmap=cm.Greys_r,interpolation = 'none'
+                    , origin='lower')
         plt.colorbar()
-        plt.imshow(np.isnan(ll_obstacles), cmap=cm.Greens_r,interpolation = 'none', origin='lower')
-        plt.plot(true_pose[0], true_pose[1], '*', color='y', markersize=30)
+        plt.imshow(np.isnan(ll_obstacles)
+                , cmap=cm.Greens_r
+                ,interpolation = 'none'
+                , origin='lower'
+                )
+        plt.plot(true_pose[0]
+                , true_pose[1]
+                , '*'
+                , color='y'
+                , markersize=30)
         plt.plot(x0, y0, '.', color = 'b', markersize = 20)
-        plt.plot(x0 + scan.rs*np.cos(scan.thetas+phi_guess), y0 + scan.rs*np.sin(scan.thetas+phi_guess), '.',color = 'r', markersize = 10)
+        plt.plot(x0 + scan.rs*np.cos(scan.thetas+phi_guess)
+                , y0 + scan.rs*np.sin(scan.thetas+phi_guess)
+                , '.'
+                ,color = 'r'
+                , markersize = 10
+                )
         # plt.xlim(0, ll_N)
         # plt.ylim(0, ll_N)
         plt.draw()
     return ll
 if __name__ == "__main__":
-    from mapdef import mapdef, NTHETA
+    from mapdef import mapdef
+    NTHETA = 20
     
     true_pose = (50,50, 0)
     x0, y0, phi = true_pose

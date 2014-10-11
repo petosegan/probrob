@@ -29,11 +29,16 @@ class OGMap():
             self.cache_thetas = []
         
     def show(self):
-        plt.imshow(self.grid, interpolation = 'none', cmap = cm.Greys_r, origin='lower')
+        plt.imshow(self.grid
+                    , interpolation = 'none'
+                    , cmap = cm.Greys_r
+                    , origin='lower'
+                    )
         plt.draw()
         
     def rect(self, x0, y0, width, height):
-        '''Place a rectangle with lower left corner at (x0, y0) and dimensions width x height'''
+        '''Place a rectangle with lower left corner at (x0, y0) 
+        and dimensions width x height'''
         self.rects.append((x0, y0, width, height))
         self.edges.append((x0, y0, x0 + width, y0))
         self.edges.append((x0, y0, x0, y0 + height))
@@ -81,9 +86,19 @@ class OGMap():
         x0, y0,phi = pose
         theta = theta+phi
         ray_len = self.ray_trace(pose, theta, rmax)
-        plt.imshow(self.grid, interpolation = 'none', cmap = cm.Greys_r, origin='lower')
+        plt.imshow(self.grid
+                    , interpolation = 'none'
+                    , cmap = cm.Greys_r
+                    , origin='lower'
+                    )
         plt.plot(x0, y0, '.', color='b', markersize = 20)
-        plt.plot([x0, x0+ray_len*np.cos(theta)],[y0, y0+ray_len*np.sin(theta)],  color='r', linestyle='-', linewidth=2)
+        plt.plot([x0
+                , x0+ray_len*np.cos(theta)]
+                ,[y0, y0+ray_len*np.sin(theta)]
+                ,  color='r'
+                , linestyle='-'
+                , linewidth=2
+                )
         plt.xlim((0,self.N))
         plt.ylim((0,self.N))
         plt.draw()
@@ -103,7 +118,11 @@ class OGMap():
             print '%d out of %d'%(x, self.N)
             for y_idx, y in np.ndenumerate(ys):
                 for th_idx, th in np.ndenumerate(self.cache_thetas):
-                    traces[x_idx][y_idx][th_idx] = self.ray_trace((x, y, th),  0, RMAX)
+                    traces[x_idx][y_idx][th_idx] = self.ray_trace(
+                                                    (x, y, th)
+                                                    ,  0
+                                                    , RMAX
+                                                    )
         
         np.save(filename, traces)
         f.close()
@@ -120,8 +139,10 @@ class Sonar():
         self.w_exp = 0.1            # weight for under-ranges
         self.w_gauss = 20           # weight for accurate ranges
         self.w_uni = 0.01           # weight for uniform glitches
-        self.w_max_hit = 2          # weight for max glitches, obstacle present
-        self.w_max_miss = 20        # weight for max glitches, no obstacle present
+        # weight for max glitches, obstacle present
+        self.w_max_hit = 2          
+        # weight for max glitches, no obstacle present
+        self.w_max_miss = 20        
         self.w_min = 2              # weight for min glitches
         self.r_rez = 0.5              # resolution of range sensor
         
@@ -135,11 +156,14 @@ class Sonar():
         self.p_min = np.zeros(len(self.rs))
         self.p_min[0] = 1
         
-        self.p_tot_partial = self.w_exp * self.p_exp + self.w_uni * self.p_uni + self.w_min * self.p_min
+        self.p_tot_partial = self.w_exp * self.p_exp \
+                            + self.w_uni * self.p_uni \
+                            + self.w_min * self.p_min
 
         
     def maxmin_filter(self, scan):
-        filtered = [(th, r) for (th, r) in scan.pings if r > 0 and r < self.RMAX]
+        filtered = [(th, r) for (th, r) in scan.pings 
+                            if r > 0 and r < self.RMAX]
         return Scan(scan.pose, *zip(*filtered))
         
     def simulate_scan(self, pose, this_map, PLOT_ON = False):
@@ -154,8 +178,16 @@ class Sonar():
         
         if PLOT_ON:
             ax = plt.subplot(111)
-            plt.imshow(this_map.grid, interpolation = 'none', cmap = cm.Greys_r, origin='lower')
-            plt.plot(x0+r_meas*np.cos(theta + phi), y0+r_meas*np.sin(theta+phi), '.', color='r')
+            plt.imshow(this_map.grid
+                        , interpolation = 'none'
+                        , cmap = cm.Greys_r
+                        , origin='lower'
+                        )
+            plt.plot(x0+r_meas*np.cos(theta + phi)
+                    , y0+r_meas*np.sin(theta+phi)
+                    , '.'
+                    , color='r'
+                    )
             plt.plot(x0, y0, '.', color='b', markersize = 20) 
             # plt.xlim(0, this_map.N)
             # plt.ylim(0, this_map.N)
@@ -175,7 +207,8 @@ class Sonar():
         if this_map.TRACES_CACHED:
             x_idx = np.argmin(abs(this_map.xs - x0))
             y_idx = np.argmin(abs(this_map.ys - y0))
-            th_idx = np.argmin(abs((this_map.cache_thetas - (th + phi))%(2*pi)))
+            th_idx = np.argmin(abs((this_map.cache_thetas -\
+                                    (th + phi))%(2*pi)))
             true_r = this_map.cache[x_idx][y_idx][th_idx]
         else:
             true_r = this_map.ray_trace(pose, th, self.RMAX)
