@@ -21,6 +21,12 @@ class Robot():
         self.goal = (25, 25, pi)
         
     def command(self, control_x, control_v):
+        x0, y0, phi = self.pose
+        vr, omega = self.vel
+        self.dx = (vr*np.cos(phi), vr*np.sin(phi), omega)
+        self.pose = self.pose + self.dx + control_x \
+            + np.random.normal(0,self.control_std, (3, 1))
+        self.vel = self.vel + control_v
         self.ensemble.pf_update(control_x, control_v)
     
     def measure(self):
@@ -41,12 +47,7 @@ class Robot():
         vel_des_pol = (3, .3*(phi_des%(2*pi) - phi_guess%(2*pi)))
         control_x = np.array([[0],[0],[0]])
         control_v = np.reshape(vel_des_pol - vel_guess, (2, 1))
-        x0, y0, phi = self.pose
-        vr, omega = self.vel
-        self.dx = (vr*np.cos(phi), vr*np.sin(phi), omega)
-        self.pose = self.pose + self.dx + control_x \
-            + np.random.normal(0,self.control_std, (3, 1))
-        self.vel = self.vel + control_v
+
         return (control_x, control_v)
     
     def show_state(self):

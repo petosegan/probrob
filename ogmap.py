@@ -39,7 +39,7 @@ class OGMap():
     def rect(self, x0, y0, width, height):
         '''Place a rectangle with lower left corner at (x0, y0) 
         and dimensions width x height'''
-        self.rects.append((x0, y0, width, height))
+        self.rects.append(Rect(x0, y0, width, height))
         self.edges.append((x0, y0, x0 + width, y0))
         self.edges.append((x0, y0, x0, y0 + height))
         self.edges.append((x0+width, y0, x0+width, y0+height))
@@ -126,7 +126,13 @@ class OGMap():
         
         np.save(filename, traces)
         f.close()
-        self.CACHED = True                    
+        self.CACHED = True
+
+    def collision(self, x, y):
+        for rect in self.rects:
+            if rect.collision(x, y):
+                return True
+        return False
         
 
 class Sonar():
@@ -239,6 +245,16 @@ class Scan():
         self.rs = rs
         self.pings = zip(self.thetas, self.rs)
         
+class Rect():
+    def __init__(self, x0, y0, width, height):
+        self.x0 = x0
+        self.y0 = y0
+        self.width = width
+        self.height = height
+        
+    def collision(self, x, y):
+        return ((x0 < x < x0 + width) and (y0 < y < y0+height))
+        
 if __name__ == "__main__":
     from mapdef import mapdef, NTHETA
     this_map = mapdef()
@@ -246,5 +262,6 @@ if __name__ == "__main__":
     pose = (50,50,0)
     
     plt.ion()
-    this_map.show()
+    #this_map.show()
     this_sonar.simulate_scan(pose, this_map, PLOT_ON = True)
+    plt.show(block=True)

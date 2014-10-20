@@ -86,4 +86,4 @@ if __name__ == "__main__":
        
     scan = this_sonar.simulate_scan(true_pose, this_map)
     
-    loglike_map(true_pose, scan, this_map, this_sonar, PLOT_ON = True)
+    loglike_map(true_pose, scan, this_map, this_sonar, PLOT_ON = False)
