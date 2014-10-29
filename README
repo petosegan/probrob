@@ -1,0 +1,17 @@
+Probabilistic Robotics
+
+What Is It?
+-----------
+This is a collection of modules written to demonstrate ideas from the book
+'Probabilistic Robotics' by Thrun, Burgard, and Fox. The aim is to implement
+Simultaneous Localization and Mapping (SLAM) for a simulated robot in a simple
+environment. At this time the simulated robot is capable of Monte Carlo
+Localization based on rangefinder data.
+
+File List
+-----------
+locate.py
+mapdef.py
+mcl.py
+ogmap.py
+robot.py

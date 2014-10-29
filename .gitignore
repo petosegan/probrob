@@ -1,5 +1,7 @@
 *.pdf
 *.profile
 *.pyc
+*.swp
 mapchange.time
 trace_cache.npy
+scratchwork/
