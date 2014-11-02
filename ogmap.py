@@ -1,3 +1,8 @@
+'''Occupancy Grid Map Representation and Operations
+
+This module implements a binary occupancy grid representation of a map of the
+environment, and related operations useful for localization and mapping.
+'''
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,10 +12,18 @@ from math import floor, pi
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 def cross(a, b):
+    '''return two-dimensional cross product'''
     return a[0]*b[1] - a[1]*b[0]
 
 class OGMap():
+    '''Representation of a square binary occupancy grid map'''
     def __init__(self, N, cache_file = 'trace_cache.npy'):
+        '''Initialize an instance
+
+        Args:
+            N (int): side length of map
+            cache_file (file): saved numpy array of ray traces
+        '''
         self.N = N
         self.xs = np.array(range(self.N))
         self.ys = np.array(range(self.N))
@@ -29,6 +42,7 @@ class OGMap():
             self.cache_thetas = []
         
     def show(self):
+        '''Plot a top down view of the map'''
         plt.imshow(self.grid
                     , interpolation = 'none'
                     , cmap = cm.Greys_r
@@ -38,7 +52,7 @@ class OGMap():
         
     def rect(self, x0, y0, width, height):
         '''Place a rectangle with lower left corner at (x0, y0) 
-        and dimensions width x height'''
+        and dimensions (width x height)'''
         self.rects.append(Rect(x0, y0, width, height))
         self.edges.append((x0, y0, x0 + width, y0))
         self.edges.append((x0, y0, x0, y0 + height))
@@ -47,7 +61,13 @@ class OGMap():
         self.grid[y0:y0+height, x0:x0+width] = 0
         
     def ray_trace(self, pose, theta, rmax):
-        ''' Test for intersection of a ray with edges in the map'''
+        ''' Test for intersection of a ray with edges in the map
+        
+        Args:
+          pose (tuple): robot pose, as (x,y) position and heading (rad)
+          theta (radian): heading of ray_trace, in the robot frame
+          rmax (int): maximum range of ray tracing
+        '''
         dists = []
         x0, y0, phi = pose
         p = (x0, y0)
@@ -104,7 +124,6 @@ class OGMap():
         plt.draw()
         
     def cache_traces(self, filename, NUM_THETA = 8, RMAX = 100):
-        
         f = open(filename, 'w')
         f.write('')
         
@@ -129,6 +148,7 @@ class OGMap():
         self.CACHED = True
 
     def collision(self, x, y):
+        '''Check if point (x, y) lies in an obstacle'''
         for rect in self.rects:
             if rect.collision(x, y):
                 return True
@@ -168,12 +188,13 @@ class Sonar():
 
         
     def maxmin_filter(self, scan):
+        '''Discard readings of 0 or RMAX, assumed to be spurious'''
         filtered = [(th, r) for (th, r) in scan.pings 
                             if r > 0 and r < self.RMAX]
         return Scan(scan.pose, *zip(*filtered))
         
     def simulate_scan(self, pose, this_map, PLOT_ON = False):
-        ''' Produce a simulation of a sonar reading from point (x0, y0) '''
+        '''Return a simulation of a sonar reading from point (x0, y0) '''
         x0, y0, phi = pose
         theta = self.thetas#headings
         r = self.rs #radius
@@ -203,12 +224,19 @@ class Sonar():
         return Scan(pose, theta, r_meas)
         
     def simulate_ping(self, pose, th, this_map):
+        '''Return a sample from the sonar probability density
+
+        Args:
+          pose (tuple): Robot pose, as (x, y) position and heading (rad)
+          th (rad): Sensor heading, in robot frame
+          this_map (OGMap): occupancy grid map'''
         p_tot = self.ping_pdf(pose, th, this_map)
         # sample
         r_meas = np.random.choice(self.rs, p=p_tot)
         return r_meas
         
     def ping_pdf(self, pose, th, this_map):
+        '''Return a sonar probability density of a specified ray'''
         x0, y0, phi = pose
         if this_map.TRACES_CACHED:
             x_idx = np.argmin(abs(this_map.xs - x0))
@@ -235,6 +263,7 @@ class Sonar():
         return p_tot
         
 class Scan():
+    '''Representation of a sonar scan result'''
     def __init__(self, pose, thetas, rs):
         self.pose = pose
         x0, y0, phi = pose
@@ -246,6 +275,7 @@ class Scan():
         self.pings = zip(self.thetas, self.rs)
         
 class Rect():
+    '''Representation of a rectangular obstacle'''
     def __init__(self, x0, y0, width, height):
         self.x0 = x0
         self.y0 = y0
@@ -253,6 +283,7 @@ class Rect():
         self.height = height
         
     def collision(self, x, y):
+        '''Check for overlap of point (x, y) with self'''
         return ((x0 < x < x0 + width) and (y0 < y < y0+height))
         
 if __name__ == "__main__":

@@ -1,3 +1,9 @@
+'''Localization Helper Function
+
+This module provides functions for calculating the likelihood of sonar scan
+data in a given map with a given pose.
+'''
+
 import os
 import ogmap
 import numpy as np
@@ -6,11 +12,12 @@ import matplotlib.cm as cm
 from math import pi
 
 def find_nearest(array,value):
+    '''Return the entry in array that is closest to value'''
     idx = (np.abs(array-value)).argmin()
     return array[idx]
 
 def ping_likelihood(pose, ping, this_map, this_sonar):
-    ''' Calculate the probability of a sonar measurement at a location,
+    ''' Calculate the probability of a sonar measurement (ping) at a location,
         given a pose and map'''
     (theta, range) = ping
     range_pdf = this_sonar.ping_pdf(pose, theta, this_map)
@@ -18,6 +25,7 @@ def ping_likelihood(pose, ping, this_map, this_sonar):
     return range_pdf[nearest_range_idx]
     
 def scan_loglikelihood(pose, scan, this_map, this_sonar):
+    '''Return the log-likelihood of a full sonar scan at a location, given a pose and map'''
     L = 0
     if this_map.grid[pose[1], pose[0]] == 0:
         return float('NaN')
@@ -27,7 +35,7 @@ def scan_loglikelihood(pose, scan, this_map, this_sonar):
     
 def loglike_map(pose, scan, this_map, this_sonar,ll_N = 100
                 , PLOT_ON = False):
-    ''' Calculate likelihood at all points in grid'''
+    '''Return likelihood of scan at all points in grid'''
     x0, y0, phi = pose
     phi_guess = phi
     
