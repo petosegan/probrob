@@ -4,7 +4,7 @@ import locate
 from mapdef import mapdef, NTHETA
 import mcl
 import matplotlib.pyplot as plt
-from math import pi
+from math import pi, exp
 
 
 
@@ -19,6 +19,10 @@ class Robot():
         self.control_std = 0.01
         
         self.goal = (25, 25, pi)
+        self.goal_radius = 3
+        self.vel_max = 3
+        self.omega_max = 0.3
+        self.displacement_slowdown = 25
         
     def command(self, control_x, control_v):
         x0, y0, phi = self.pose
@@ -34,18 +38,33 @@ class Robot():
         self.last_scan = scan
         self.ensemble.pf_sonar(scan, self.sonar, self.this_map)
         
-    def control_policy(self):
+    def estimate_state(self):
+        """return best guess of robot state"""
+        
         idx_guess = np.argmax(self.ensemble.weight)
         pos_guess = self.ensemble.x_ens[:, idx_guess]
         vel_guess = self.ensemble.v_ens[:, idx_guess]
+        return (pos_guess, vel_guess)
+
+    def control_policy(self):
+        '''return appropriate control vectors'''
+        control_x = np.array([[0],[0],[0]])
+
+        pos_guess, vel_guess = self.estimate_state()
         displacement = (self.goal-pos_guess)[0:2]
-        vel_des_rect = displacement / np.linalg.norm(displacement)
+        displacement_norm = np.linalg.norm(displacement)
+        vel_des_rect = displacement / displacement_norm
         vx_des = vel_des_rect[0]
         vy_des = vel_des_rect[1]
         phi_des = np.arctan2(vy_des, vx_des)
         phi_guess = pos_guess[2]
-        vel_des_pol = (3, .3*(phi_des%(2*pi) - phi_guess%(2*pi)))
-        control_x = np.array([[0],[0],[0]])
+        slowdown_factor = (1 -
+        exp(-displacement_norm/self.displacement_slowdown))
+        vel_des_r = self.vel_max * slowdown_factor
+        vel_des_phi = self.omega_max*(phi_des%(2*pi) - phi_guess%(2*pi))
+        vel_des_pol = (vel_des_r, vel_des_phi)
+        if displacement_norm <= self.goal_radius:
+            vel_des_pol = (0,0) 
         control_v = np.reshape(vel_des_pol - vel_guess, (2, 1))
 
         return (control_x, control_v)
