@@ -24,9 +24,6 @@ robot.py
 
 TO DO
 ----------
-Add obstacle avoidance. Right now the robot uses the obstacles for navigation,
-but will happily crash right into them... which crashes the program.
-
 Add sliding mode.
 
 Implement SLAM.
