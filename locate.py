@@ -27,7 +27,7 @@ def ping_likelihood(pose, ping, this_map, this_sonar):
 def scan_loglikelihood(pose, scan, this_map, this_sonar):
     '''Return the log-likelihood of a full sonar scan at a location, given a pose and map'''
     L = 0
-    if this_map.grid[pose[1], pose[0]] == 0:
+    if this_map.collision(pose[0], pose[1]):
         return float('NaN')
     for ping in scan.pings:
         L += np.log(ping_likelihood(pose, ping, this_map, this_sonar))
@@ -39,8 +39,8 @@ def loglike_map(pose, scan, this_map, this_sonar,ll_N = 100
     x0, y0, phi = pose
     phi_guess = phi
     
-    xs = np.linspace(0, this_map.N-1, ll_N)
-    ys = np.linspace(0, this_map.N-1, ll_N)
+    xs = np.linspace(1, this_map.N-1, ll_N)
+    ys = np.linspace(1, this_map.N-1, ll_N)
     ll = np.zeros((ll_N, ll_N))
     for i, xpos in np.ndenumerate(xs):
         for j, ypos in np.ndenumerate(ys):
@@ -80,7 +80,7 @@ def loglike_map(pose, scan, this_map, this_sonar,ll_N = 100
         # plt.xlim(0, ll_N)
         # plt.ylim(0, ll_N)
         plt.draw()
-    return ll
+    return (ll, (xs, ys))
 if __name__ == "__main__":
     from mapdef import mapdef
     NTHETA = 20

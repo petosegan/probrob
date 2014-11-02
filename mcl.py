@@ -39,9 +39,10 @@ class Ensemble():
 
     def pf_update(self, control_x, control_v):
         ''' Carry out update step of a particle filter algorithm'''
-        acc = np.random.normal(0,self.acc_std,(2,self.N))
+        num_part = len(self.x_ens[0])
+        acc = np.random.normal(0,self.acc_std,(2,num_part))
         self.x_ens = self.x_ens + self.dx \
-                                + np.tile(control_x, (1, self.N))
+                                + np.tile(control_x, (1, num_part))
         self.v_ens = self.v_ens + acc + control_v
         vr = self.v_ens[0,:]
         omega = self.v_ens[1,:]
@@ -79,8 +80,9 @@ class Ensemble():
     def pf_sonar(self, scan, this_sonar, this_map):
         ''' Carry out measurement step of a particle filter algorithm
             , using sonar data '''
-        weight = np.zeros(self.N)
-        for i in range(self.N):
+        num_part = len(self.x_ens[0])
+        weight = np.zeros(num_part)
+        for i in range(num_part):
             weight[i] = np.exp(locate.scan_loglikelihood(
                                 self.x_ens[:, i]
                                 , scan
@@ -88,12 +90,54 @@ class Ensemble():
                                 , this_sonar
                                 ))
         weight = weight / np.sum(weight) # normalize
-        resample = np.random.choice(range(self.N), self.N, p=weight)
+        resample = np.random.choice(range(num_part), self.N, p=weight)
         self.x_ens = np.transpose(
                         np.array([self.x_ens[:,i] for i in resample]))
         self.v_ens = np.transpose(
                         np.array([self.v_ens[:,i] for i in resample]))
-        
+
+    def inject_random(self, pose, scan, this_sonar, this_map, num_part = 10):
+        """add particles at high likelihood locations"""
+        ll_N = this_map.N/4
+
+        # calculate a coarse likelihood map, and process to remove points in
+        # obstacles
+        coarse_ll_map, coords = locate.loglike_map(pose, scan, this_map,
+                this_sonar, ll_N)
+        coarse_ll_map = np.where(np.isnan(coarse_ll_map),
+                np.zeros(coarse_ll_map.shape), coarse_ll_map)
+        min_ll = np.min(coarse_ll_map)
+        coarse_ll_map = np.where(coarse_ll_map == 0,
+                min_ll*np.ones(coarse_ll_map.shape), coarse_ll_map)
+
+        xs, ys = coords
+        Xs, Ys = np.meshgrid(xs, ys)
+
+        weight = np.exp(np.ravel(coarse_ll_map))
+        weight = weight / np.sum(weight)
+        sample = np.random.choice(range(len(weight)), num_part, p=weight)
+        best_xs = np.ravel(Xs)[sample]
+        best_ys = np.ravel(Ys)[sample]
+        best_phis = [pose[2]]*num_part
+
+        new_x_ens_x = np.append(self.x_ens[0], best_xs)
+        new_x_ens_y = np.append(self.x_ens[1], best_ys)
+        new_x_ens_phi = np.append(self.x_ens[2], best_phis)
+        self.x_ens = np.array([new_x_ens_x, new_x_ens_y, new_x_ens_phi])
+        mean_v_ens_r = np.mean(self.v_ens[0])*np.ones(num_part)
+        mean_v_ens_phi = np.mean(self.v_ens[1])*np.ones(num_part)
+        self.v_ens = np.array([np.append(self.v_ens[0], mean_v_ens_r),
+                               np.append(self.v_ens[1], mean_v_ens_phi),
+                               ])
+
+        vr = self.v_ens[0,:]
+        omega = self.v_ens[1,:]
+        phi = self.x_ens[2,:]
+        self.dx = np.array([np.abs(vr)*np.cos(phi)
+                            , np.abs(vr)*np.sin(phi)
+                            , omega
+                            ])
+
     def show(self, col = 'b', win_size = win_size):
         plt.subplot(121)
         plt.cla()
@@ -121,6 +165,7 @@ class Ensemble():
                 , self.x_ens[1][:]
                 , np.cos(self.x_ens[2][:])
                 , np.sin(self.x_ens[2][:])
+                , color=col
                 )
         plt.imshow(this_map.grid
                     ,cmap=cm.Greens_r
@@ -164,6 +209,7 @@ if __name__ == "__main__":
         if i % meas_rate == 0:
             scan = this_sonar.simulate_scan(true_pose, this_map)
             this_ens.pf_sonar(scan, this_sonar, this_map)
+            this_ens.inject_random(true_pose, scan, this_sonar,this_map, 10)
             this_ens.show_map_scan(col = 'r'
                                 , scan = scan
                                 , this_map = this_map
