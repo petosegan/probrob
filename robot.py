@@ -5,6 +5,7 @@ from mapdef import mapdef, NTHETA
 import mcl
 import matplotlib.pyplot as plt
 from math import pi, exp
+from random import randint
 
 
 
@@ -18,8 +19,10 @@ class Robot():
         
         self.control_std = 0.01
         
-        self.goal = (25, 25, pi)
+        self.goal = (0, 65, pi)
         self.goal_radius = 3
+        self.goal_attained = False
+
         self.vel_max = 3
         self.omega_max = 0.3
         self.displacement_slowdown = 25
@@ -37,6 +40,9 @@ class Robot():
         scan = self.sonar.simulate_scan(self.pose, self.this_map)
         self.last_scan = scan
         self.ensemble.pf_sonar(scan, self.sonar, self.this_map)
+        pose_guess, _ = self.estimate_state()
+        self.ensemble.inject_random(pose_guess, scan, self.sonar,
+                self.this_map)
         
     def estimate_state(self):
         """return best guess of robot state"""
@@ -65,6 +71,7 @@ class Robot():
         vel_des_pol = (vel_des_r, vel_des_phi)
         if displacement_norm <= self.goal_radius:
             vel_des_pol = (0,0) 
+            self.goal_attained = True
         control_v = np.reshape(vel_des_pol - vel_guess, (2, 1))
 
         return (control_x, control_v)
@@ -87,9 +94,13 @@ class Robot():
             self.command(control_x, control_v)
             self.measure()
             self.show_state()
+            if self.goal_attained:
+                print 'GOAL REACHED'
+                break
             
 if __name__ == "__main__":
-    true_pose = (75, 60, pi)
+    true_pose = (randint(15, 90), randint(5, 65), pi)
+#    true_pose = (90,90,0) # fails without obstacle avoidance
     this_map = mapdef()
     this_sonar = ogmap.Sonar(NUM_THETA = 10, GAUSS_VAR = 1)
     this_ens = mcl.Ensemble(pose = true_pose
