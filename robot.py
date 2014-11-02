@@ -99,6 +99,12 @@ class Robot():
                 break
             
 if __name__ == "__main__":
+    print """Legend:
+        Yellow star\t -\t True position of robot
+        Blue arrows\t -\t Particle cloud
+        Yellow dots\t -\t Sonar pings
+        Green boxes\t -\t Obstacles
+        Red star\t -\t Goal"""
     true_pose = (randint(15, 90), randint(5, 65), pi)
 #    true_pose = (90,90,0) # fails without obstacle avoidance
     this_map = mapdef()

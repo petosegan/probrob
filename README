@@ -8,6 +8,12 @@ Simultaneous Localization and Mapping (SLAM) for a simulated robot in a simple
 environment. At this time the simulated robot is capable of Monte Carlo
 Localization based on rangefinder data.
 
+Usage
+----------
+Run robot.py to watch the robot navigate to a goal using Monte Carlo 
+Localization. The first run with any map will take a while to compute ray
+ traces, which are cached for future runs.
+
 File List
 -----------
 locate.py
@@ -15,3 +21,12 @@ mapdef.py
 mcl.py
 ogmap.py
 robot.py
+
+TO DO
+----------
+Add obstacle avoidance. Right now the robot uses the obstacles for navigation,
+but will happily crash right into them... which crashes the program.
+
+Add sliding mode.
+
+Implement SLAM.
