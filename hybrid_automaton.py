@@ -26,17 +26,18 @@ class HybridAutomaton():
             control_policy (fn) - a function for determining control outputs
             given the robot state"""
         for guard in self.current_behavior.guards:
-            if guard.condition(robot_state):
+            if guard.condition(**robot_state):
                 self.current_behavior = guard.new_behavior
-                self.state = guard.reset(self.state, robot_state)
+                self.state = guard.reset(self.state, **robot_state)
                 break
         control_policy = self.current_behavior.policy
         return control_policy
 
 class Behavior():
     ''''Represents a node in a hybrid automaton'''
-    def __init__(self, policy, guards = []):
+    def __init__(self, name, policy, guards = []):
         """create a node instance"""
+        self.name = name
         self.guards = guards
         self.policy = policy
 
