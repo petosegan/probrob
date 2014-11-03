@@ -47,7 +47,6 @@ class Robot():
         
     def estimate_state(self):
         """return best guess of robot state"""
-        
         idx_guess = np.argmax(self.ensemble.weight)
         pos_guess = self.ensemble.x_ens[:, idx_guess]
         vel_guess = self.ensemble.v_ens[:, idx_guess]
@@ -55,7 +54,7 @@ class Robot():
 
     def flee_vector(self):
         """return unit vector for avoiding obstacles"""
-        pings = self.last_scan.pings 
+        pings = self.last_scan.pings
         xs = [cos(ping[0]) / (ping[1]+1) for ping in pings]
         ys = [sin(ping[0]) / (ping[1]+1) for ping in pings]
         avoid_vec = (np.sum(xs), np.sum(ys))

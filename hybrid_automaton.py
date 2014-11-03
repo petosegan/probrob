@@ -8,7 +8,7 @@ their RESET action.'''
 
 class HybridAutomaton():
     '''Represents a hybrid automaton'''
-    def __init__(self, behaviors, initial_state):
+    def __init__(self, behaviors, initial_behavior, state):
         """create a hybrid automaton instance
         
         Args:
@@ -16,32 +16,36 @@ class HybridAutomaton():
             pairs
             initial_state (Behavior) - the starting Behavior"""
         self.behaviors = behaviors
-        self.status = initial_state
+        self.current_behavior = initial_behavior
+        self.state = state
 
-    def automate(self):
+    def update(self, robot_state):
         """execute automation update
         
         Return:
             control_policy (fn) - a function for determining control outputs
             given the robot state"""
-        for guard in self.status.guards:
+        for guard in self.current_behavior.guards:
             if guard.condition(robot_state):
-                self.status = guard.new_behavior
+                self.current_behavior = guard.new_behavior
+                self.state = guard.reset(self.state, robot_state)
                 break
-        control_policy = self.status.policy
+        control_policy = self.current_behavior.policy
         return control_policy
 
 class Behavior():
     ''''Represents a node in a hybrid automaton'''
-    def __init__(self, guards):
+    def __init__(self, policy, guards = []):
         """create a node instance"""
         self.guards = guards
+        self.policy = policy
 
-    def policy(self, robot_state):
-        abstract
+    def add_guards(self, guard_list):
+        self.guards.extend(guard_list)
 
 class Guard():
-    def __init__(self, condition, new_behavior):
+    def __init__(self, condition, new_behavior, reset):
         """create a guard edge instance"""
         self.condition = condition
         self.new_behavior = new_behavior
+        self.reset = reset
