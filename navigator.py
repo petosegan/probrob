@@ -1,3 +1,11 @@
+""" Navigator
+
+This module defines a hybrid automaton that acts as a navigator for my robot
+simulator.
+
+This hybrid automaton design was inspired by the Coursera course "Control of
+Mobile Robots" taught by Dr. Magnus Egerstedt of Georgia Tech.
+"""
 import hybrid_automaton as ha
 import numpy as np
 
@@ -14,7 +22,9 @@ def vel_des_rect2pol(vel_des_rect, omega_max, phi_guess, **kwargs):
 ## Policies
 
 def gtg_policy(slowdown_radius, vel_max, vel_guess, displacement, **kwargs):
-    """control policy for go to goal behavior"""
+    """control policy for go to goal behavior
+    
+    move directly towards goal, slowing down upon approach"""
     displacement_norm = np.linalg.norm(displacement)
     slowdown_factor = (1 - exp(-displacement_norm / slowdown_radius))
     vel_des_r = vel_max * slowdown_factor
@@ -24,14 +34,18 @@ def gtg_policy(slowdown_radius, vel_max, vel_guess, displacement, **kwargs):
     return control_v
 
 def ao_policy(vel_guess, flee_vector, **kwargs):
-    """control_policy for avoid obstacle behavior"""
+    """control_policy for avoid obstacle behavior
+    
+    flee from obstacles"""
     control_x = np.array([[0],[0],[0]])
     vel_des_pol = vel_des_rect2pol(vel_max * flee_vector, **kwargs)
     control_v = np.reshape(vel_des_pol - vel_guess, (2, 1))
     return control_v
 
 def fw_cc_policy(vel_guess, flee_vector, **kwargs):
-    """control policy for follow wall counter clockwise behavior"""
+    """control policy for follow wall counter clockwise behavior
+    
+    Move normal to obstacle in ccw sense"""
     flee_x, flee_y = flee_vector
     fw_cc_vector = (flee_y, -flee_x)
     vel_des_pol = vel_des_rect2pol(vel_max * fw_cc_vector, **kwargs)
@@ -39,7 +53,9 @@ def fw_cc_policy(vel_guess, flee_vector, **kwargs):
     return control_v
 
 def fw_c_policy(vel_guess, flee_vector, **kwargs):
-    """control policy for follow wall clockwise behavior"""
+    """control policy for follow wall clockwise behavior
+    
+    Move normal to obstacle in cw sense"""
     flee_x, flee_y = flee_vector
     fw_c_vector = (-flee_y, flee_x)
     vel_des_pol = vel_des_rect2pol(vel_max * fw_c_vector, **kwargs)
@@ -47,7 +63,9 @@ def fw_c_policy(vel_guess, flee_vector, **kwargs):
     return control_v
 
 def goal_policy(**kwargs):
-    """control policy for goal reached behavior"""
+    """control policy for goal reached behavior
+    
+    Stop"""
     vel_des_pol = (0,0)
     control_v = np.reshape(vel_des_pol - vel_guess, (2, 1))
     return control_v
@@ -55,19 +73,28 @@ def goal_policy(**kwargs):
 ## Guard Conditions
 
 def condition_fw_gtg(goal_vector, flee_vector, last_goal_distance, **kwargs):
-    """condition for transition from follow wall to go-to-goal"""
+    """condition for transition from follow wall to go-to-goal
+    
+    Stop wall following and seek the goal when the obstacle is on the opposite side of you from
+    the goal, and you are closer to the goal than when wall following began."""
     distance = np.linalg.norm(goal_vector)
     direction = np.dot(goal_vector, flee_vector)
     return (distance < last_goal_distance and direction> 0)
 
 def condition_fw_ao(obst_distance, flee_threshold, guard_fatness, **kwargs):
-    """condition for transision from follow wall to avoid obstacle"""
+    """condition for transision from follow wall to avoid obstacle
+    
+    Stop wall following and avoid the obstacle when the distance to the
+    obstacle is below the threshold"""
     return (obst_distance < flee_threshold - 0.5*guard_fatness)
 
 def condition_gtg_fw_cc(obst_distance, goal_vector, flee_vector, flee_threshold,
         guard_fatness, **kwargs):
     """condition for transition from go-to-goal to follow wall
-    counter-clockwise"""
+    counter-clockwise
+    
+    Stop seeking the goal and start following the wall in ccw sense when the
+    obstacle distance is below threshold and moving ccw will approach the goal"""
     flee_x, flee_y = flee_vector
     fw_cc_vector = (flee_y, -flee_x)
     direction = np.dot(goal_vector, fw_cc_vector)
@@ -87,11 +114,14 @@ def condition_gtg_fw_c(obst_distance, goal_vector, flee_vector, flee_threshold, 
 def condition_ao_fw_cc(goal_vector, flee_vector, flee_threshold, guard_fatness,
         **kwargs):
     """condition for transition from avoid obstacle to follow wall
-    counter-clockwise"""
+    counter-clockwise
+    
+    Stop avoiding the obstacle and follow the wall when the obstacle distane is
+    above threshold and moving ccw will approach the goal"""
     flee_x, flee_y = flee_vector
     fw_cc_vector = (flee_y, -flee_x)
     direction = np.dot(goal_vector, fw_cc_vector)
-    return (obst_distance < flee_threshold - 0.5*guard_fatness and direction >
+    return (obst_distance > flee_threshold - 0.5*guard_fatness and direction >
             0)
 
 
@@ -102,11 +132,13 @@ def condition_ao_fw_c(goal_vector, flee_vector, flee_threshold, guard_fatness,
     flee_x, flee_y = flee_vector
     fw_c_vector = (-flee_y, flee_x)
     direction = np.dot(goal_vector, fw_c_vector)
-    return (obst_distance < flee_threshold - 0.5*guard_fatness and direction >
+    return (obst_distance > flee_threshold - 0.5*guard_fatness and direction >
             0)
 
 def condition_gtg_goal(goal_vector, goal_radius, **kwargs):
-    """condition for transition from go-to-goal to goal"""
+    """condition for transition from go-to-goal to goal
+    
+    Stop seeking the goal when within the goal radius"""
     distance = np.linalg.norm(goal_vector)
     return (distance < goal_radius)
 
@@ -128,6 +160,7 @@ behavior_fw_c = ha.Behavior('Follow-wall-cw',fw_c_policy)
 behavior_goal = ha.Behavior('Goal-reached',goal_policy)
 
 ## Guards
+# Defines the network structure of the navigator
 
 guard_gtg_fw_cc = ha.Guard(condition_gtg_fw_cc, behavior_fw_cc,
         record_goal_distance)
@@ -148,10 +181,12 @@ guard_ao_fw_cc  = ha.Guard(condition_ao_fw_cc, behavior_fw_cc,
 guard_ao_fw_c   = ha.Guard(condition_ao_fw_c, behavior_fw_c, record_goal_distance)
 behavior_ao.add_guards([guard_ao_fw_cc, guard_ao_fw_c])
 
+## Navigator
 navigator = ha.HybridAutomaton([behavior_gtg, behavior_ao, behavior_fw_cc,
     behavior_fw_c], behavior_gtg, {})
 
 if __name__ == "__main__":
+    # A carelessly chosen set of test parameters
     robot_state = {'omega_max': 3,
                    'phi_guess': 0,
                    'slowdown_radius':5,
