@@ -179,7 +179,7 @@ class Ensemble():
                 )
         plt.xlim(0, win_size)
         plt.ylim(0, win_size)
-        plt.draw()    
+    #    plt.draw()    
 
 if __name__ == "__main__": 
     from mapdef import mapdef, NTHETA
