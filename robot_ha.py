@@ -118,9 +118,9 @@ class Robot():
                 print 'GOAL REACHED'
                 break
             self.measure()
+            self.show_state()
             control_x, control_v = self.control_policy()
             self.command(control_x, control_v)
-            self.show_state()
            
 if __name__ == "__main__":
     print """Legend:
