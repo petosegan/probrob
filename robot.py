@@ -103,7 +103,7 @@ class Robot():
         return (control_x, control_v)
     
     def show_state(self):
-        this_ens.show_map_scan(col = 'b'
+        self.ensemble.show_map_scan(col = 'b'
                             , scan = self.last_scan
                             , this_map = self.this_map
                             , pose = self.pose
