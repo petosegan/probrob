@@ -1,0 +1,6 @@
+There's an odd bug I'm noticing... the sonar pings are not placed correctly.
+It's like they are being taken relative to the robot frame rather than the
+lab frame somewhere.
+
+The other problem is that the whole thing goes nuts when the robot leaves the
+map area. Maybe just add walls around the boundary?
