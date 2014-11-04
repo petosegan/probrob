@@ -193,7 +193,10 @@ class Sonar():
         '''Discard readings of 0 or RMAX, assumed to be spurious'''
         filtered = [(th, r) for (th, r) in scan.pings 
                             if r > 0 and r < self.RMAX]
-        return Scan(scan.pose, *zip(*filtered))
+        try:
+            return Scan(scan.pose, *zip(*filtered))
+        except: #this happens when filtered is empty
+            raise
         
     def simulate_scan(self, pose, this_map, PLOT_ON = False):
         '''Return a simulation of a sonar reading from point (x0, y0) '''

@@ -19,9 +19,10 @@ class Robot():
         
         self.control_std = 0.01
         
-        self.goal = (0, 65, pi)
+        self.goal = (50, 50, pi)
         self.goal_radius = 3
         self.goal_attained = False
+        self.crashed = False
 
         self.vel_max = 3
         self.omega_max = 0.3
@@ -31,19 +32,31 @@ class Robot():
     def command(self, control_x, control_v):
         x0, y0, phi = self.pose
         vr, omega = self.vel
-        self.dx = (vr*np.cos(phi), vr*np.sin(phi), omega)
-        self.pose = self.pose + self.dx + control_x \
-            + np.random.normal(0,self.control_std, (3, 1))
-        self.vel = self.vel + control_v
-        self.ensemble.pf_update(control_x, control_v)
+        vr = min(vr, self.this_map.ray_trace(self.pose, 0, self.vel_max))
+        random_move =np.random.normal(0, self.control_std, (3, 1))
+        random_dist = np.linalg.norm(random_move[0:2])
+        if self.this_map.ray_trace(self.pose, 0, self.vel_max) < vr+random_dist:
+            self.crashed = True
+        else:
+            self.dx = (vr*np.cos(phi), vr*np.sin(phi), omega)
+            self.pose = self.pose + self.dx + control_x \
+                + random_move 
+            self.vel = self.vel + control_v
+            try:
+                self.ensemble.pf_update(control_x, control_v)
+            except:
+                pass
     
     def measure(self):
         scan = self.sonar.simulate_scan(self.pose, self.this_map)
-        self.last_scan = self.sonar.maxmin_filter(scan)
-        self.ensemble.pf_sonar(scan, self.sonar, self.this_map)
-        pose_guess, _ = self.estimate_state()
-        self.ensemble.inject_random(pose_guess, scan, self.sonar,
+        try:
+            self.last_scan = self.sonar.maxmin_filter(scan)
+            self.ensemble.pf_sonar(scan, self.sonar, self.this_map)
+            pose_guess, _ = self.estimate_state()
+            self.ensemble.inject_random(pose_guess, scan, self.sonar,
                 self.this_map)
+        except ValueError, TypeError:
+            pass
         
     def estimate_state(self):
         """return best guess of robot state"""
@@ -107,6 +120,9 @@ class Robot():
             if self.goal_attained:
                 print 'GOAL REACHED'
                 break
+            if self.crashed:
+                print 'CRASH!'
+                break
             self.measure()
             self.show_state()
             control_x, control_v = self.control_policy()
@@ -120,7 +136,7 @@ if __name__ == "__main__":
         Green boxes\t -\t Obstacles
         Red star\t -\t Goal"""
     true_pose = (randint(15, 90), randint(5, 65), pi)
-    true_pose = (90,90,0) # fails without obstacle avoidance
+    true_pose = (50,90,0) # fails without obstacle avoidance
     this_map = mapdef()
     this_sonar = ogmap.Sonar(NUM_THETA = 10, GAUSS_VAR = .01)
     this_ens = mcl.Ensemble(pose = true_pose
