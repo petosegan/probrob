@@ -55,7 +55,7 @@ class Robot():
             pose_guess, _ = self.estimate_state()
             self.ensemble.inject_random(pose_guess, scan, self.sonar,
                 self.this_map)
-        except ValueError, TypeError:
+        except ValueError, BadScanError:
             pass
         
     def estimate_state(self):
@@ -136,7 +136,7 @@ if __name__ == "__main__":
         Green boxes\t -\t Obstacles
         Red star\t -\t Goal"""
     true_pose = (randint(15, 90), randint(5, 65), pi)
-    true_pose = (50,90,0) # fails without obstacle avoidance
+    true_pose = (50,90,-90) # fails without obstacle avoidance
     this_map = mapdef()
     this_sonar = ogmap.Sonar(NUM_THETA = 10, GAUSS_VAR = .01)
     this_ens = mcl.Ensemble(pose = true_pose
