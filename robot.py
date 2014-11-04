@@ -108,9 +108,9 @@ class Robot():
                 print 'GOAL REACHED'
                 break
             self.measure()
+            self.show_state()
             control_x, control_v = self.control_policy()
             self.command(control_x, control_v)
-            self.show_state()
            
 if __name__ == "__main__":
     print """Legend:
@@ -122,7 +122,7 @@ if __name__ == "__main__":
     true_pose = (randint(15, 90), randint(5, 65), pi)
     true_pose = (90,90,0) # fails without obstacle avoidance
     this_map = mapdef()
-    this_sonar = ogmap.Sonar(NUM_THETA = 10, GAUSS_VAR = 1)
+    this_sonar = ogmap.Sonar(NUM_THETA = 10, GAUSS_VAR = .01)
     this_ens = mcl.Ensemble(pose = true_pose
                         , acc_var = np.array([[.001],[.001]]))
     this_robot = Robot(true_pose, this_map, this_sonar, this_ens)
