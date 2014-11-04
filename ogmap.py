@@ -162,14 +162,14 @@ class Sonar():
         self.EXP_LEN = 0.1            # length scale for under-ranges
         self.NUM_THETA = NUM_THETA        # number of headings
         self.GAUSS_VAR = GAUSS_VAR    # variance of accurate readings
-        self.w_exp = 0.01            # weight for under-ranges
-        self.w_gauss = 200           # weight for accurate ranges
-        self.w_uni = 0.01           # weight for uniform glitches
+        self.w_exp = 0.001            # weight for under-ranges
+        self.w_gauss = 20           # weight for accurate ranges
+        self.w_uni = 0.001           # weight for uniform glitches
         # weight for max glitches, obstacle present
         self.w_max_hit = 2          
         # weight for max glitches, no obstacle present
         self.w_max_miss = 20        
-        self.w_min = .01              # weight for min glitches
+        self.w_min = .001              # weight for min glitches
         self.r_rez = 0.5              # resolution of range sensor
         
         self.thetas = np.linspace(0, 2*pi, self.NUM_THETA) #headings
@@ -250,7 +250,7 @@ class Sonar():
             true_r = this_map.ray_trace(pose, th, self.RMAX)
         if true_r < self.RMAX:
             p_gauss = np.exp(-0.5*(self.rs - true_r)**2 / self.GAUSS_VAR)
-            p_gauss = p_gauss / np.sum(p_gauss)
+            p_gauss /= np.sum(p_gauss)
             w_gauss = self.w_gauss
             w_max = self.w_max_hit
         else:

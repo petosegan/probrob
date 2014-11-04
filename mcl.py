@@ -89,7 +89,10 @@ class Ensemble():
                                 , this_map
                                 , this_sonar
                                 ))
+        bad_weights = np.isnan(weight)
+        weight[bad_weights] = 0
         weight = weight / np.sum(weight) # normalize
+        print max(weight)
         resample = np.random.choice(range(num_part), self.N, p=weight)
         self.x_ens = np.transpose(
                         np.array([self.x_ens[:,i] for i in resample]))
