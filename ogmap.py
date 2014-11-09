@@ -293,7 +293,7 @@ class Rect():
         
     def collision(self, x, y):
         '''Check for overlap of point (x, y) with self'''
-        return ((self.x0 < x < self.x0 + self.width) and (self.y0 < y <
+        return ((self.x0 <= x <= self.x0 + self.width) and (self.y0 <= y <=
             self.y0+self.height))
         
 if __name__ == "__main__":
