@@ -91,3 +91,7 @@ class TestSonar():
         with pytest.raises(ogmap.BadScanError):
             bad_scan = ogmap.Scan(pose, [0], [0])
             bad_scan_filt = sonar.maxmin_filter(bad_scan)
+
+    def test_simulate_scan(self):
+        """test simulation of sonar scans"""
+        pass
