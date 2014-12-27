@@ -67,10 +67,11 @@ class OGMap():
         ''' Test for intersection of a ray with edges in the map
         
         Args:
-          pose (tuple): robot pose, as (x,y) position and heading (rad)
+          pose (1x3 array): robot pose, as (x,y) position and heading (rad)
           theta (radian): heading of ray_trace, in the robot frame
           rmax (int): maximum range of ray tracing
         '''
+	assert pose.shape==(3,)
         dists = []
         x0, y0, phi = pose
         p = (x0, y0)
@@ -141,7 +142,7 @@ class OGMap():
             for y_idx, y in np.ndenumerate(ys):
                 for th_idx, th in np.ndenumerate(self.cache_thetas):
                     traces[x_idx][y_idx][th_idx] = self.ray_trace(
-                                                    (x, y, th)
+                                                    np.array((x, y, th))
                                                     ,  0
                                                     , RMAX
                                                     )
@@ -203,6 +204,7 @@ class Sonar():
         
     def simulate_scan(self, pose, this_map, PLOT_ON = False):
         '''Return a simulation of a sonar reading from point (x0, y0) '''
+	assert pose.shape==(3,)
         x0, y0, phi = pose
         theta = self.thetas#headings
         r = self.rs #radius

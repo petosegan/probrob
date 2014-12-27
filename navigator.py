@@ -17,7 +17,7 @@ def vel_des_rect2pol(vel_des_rect, omega_max, phi_guess, **kwargs):
     vel_des_r = np.linalg.norm(vel_des_rect)
     phi_des = np.arctan2(vy_des, vx_des)
     vel_des_phi = omega_max * (phi_des % (2*pi) - phi_guess % (2*pi))
-    vel_des_pol = (vel_des_r, vel_des_phi)
+    vel_des_pol = np.array((vel_des_r, vel_des_phi))
     return vel_des_pol
 
 ## Policies
@@ -31,16 +31,15 @@ def gtg_policy(slowdown_radius, vel_max, vel_guess, goal_vector, **kwargs):
     vel_des_r = vel_max * slowdown_factor
     vel_des_rect = vel_des_r * goal_vector / displacement_norm
     vel_des_pol = vel_des_rect2pol(vel_des_rect, **kwargs)
-    control_v = np.reshape(vel_des_pol - vel_guess, (2, 1))
+    control_v = vel_des_pol - vel_guess
     return control_v
 
 def ao_policy(vel_max, vel_guess, flee_vector, **kwargs):
     """control_policy for avoid obstacle behavior
     
     flee from obstacles"""
-    control_x = np.array([[0],[0],[0]])
     vel_des_pol = vel_des_rect2pol(vel_max * flee_vector, **kwargs)
-    control_v = np.reshape(vel_des_pol - vel_guess, (2, 1))
+    control_v = vel_des_pol - vel_guess
     return control_v
 
 def fw_cc_policy(vel_guess, flee_vector, vel_max, **kwargs):
@@ -50,7 +49,7 @@ def fw_cc_policy(vel_guess, flee_vector, vel_max, **kwargs):
     flee_x, flee_y = flee_vector
     fw_cc_vector = (-flee_y, flee_x)
     vel_des_pol = vel_des_rect2pol(vel_max * fw_cc_vector, **kwargs)
-    control_v = np.reshape(vel_des_pol - vel_guess, (2, 1))
+    control_v = vel_des_pol - vel_guess
     return control_v
 
 def fw_c_policy(vel_guess, flee_vector, vel_max, **kwargs):
@@ -60,15 +59,15 @@ def fw_c_policy(vel_guess, flee_vector, vel_max, **kwargs):
     flee_x, flee_y = flee_vector
     fw_c_vector = (flee_y, -flee_x)
     vel_des_pol = vel_des_rect2pol(vel_max * fw_c_vector, **kwargs)
-    control_v = np.reshape(vel_des_pol - vel_guess, (2, 1))
+    control_v = vel_des_pol - vel_guess
     return control_v
 
 def goal_policy(vel_guess,**kwargs):
     """control policy for goal reached behavior
     
     Stop"""
-    vel_des_pol = (0,0)
-    control_v = np.reshape(vel_des_pol - vel_guess, (2, 1))
+    vel_des_pol = np.array((0,0))
+    control_v = vel_des_pol - vel_guess
     return control_v
 
 ## Guard Conditions

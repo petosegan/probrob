@@ -1,7 +1,7 @@
 import numpy as np
 import ogmap
 import locate
-from mapdef_pocket import mapdef, NTHETA
+from mapdef import mapdef, NTHETA
 import mcl
 import matplotlib.pyplot as plt
 from math import pi, exp, sin, cos
@@ -10,21 +10,11 @@ from navigator import navigator
 from robot import Robot
 
 class Robot_HA(Robot):
-    def __init__(self, pose, this_map, sonar, ensemble):
-        Robot.__init__(self, pose, this_map, sonar, ensemble) 
+    def __init__(self, pose, goal, this_map, sonar):
+        Robot.__init__(self, pose, goal, this_map, sonar) 
 
         self.navigator = navigator
-
-        self.control_std = 0.01
-        
-        self.goal = (40, 50, pi)
-        self.goal_radius = 3
-        self.goal_attained = False
-
-        self.vel_max = 3
-        self.omega_max = 0.3
-        self.displacement_slowdown = 25
-        self.avoid_threshold = 5 
+	self.avoid_threshold = 10
         self.guard_fatness = 3
 
         self.fixed_params = {'omega_max': self.omega_max
@@ -36,17 +26,17 @@ class Robot_HA(Robot):
                             }
     def control_policy(self):
         '''return appropriate control vectors'''
-        control_x = np.array([[0],[0],[0]])
+        control_x = np.array([0,0,0])
         pos_guess, vel_guess = self.estimate_state()
         displacement = (self.goal-pos_guess)[0:2]
         phi_guess = pos_guess[2]
-        flee_vector = self.flee_vector()
+        self.flee_vec = self.flee_vector()
         obst_distance = min(self.last_scan.rs)
 
         estimated_state = {'phi_guess':phi_guess
                           ,'vel_guess':vel_guess
                           ,'goal_vector':displacement
-                          ,'flee_vector':flee_vector
+                          ,'flee_vector':self.flee_vec
                           ,'obst_distance':obst_distance
                           }
 
@@ -69,12 +59,10 @@ if __name__ == "__main__":
         Yellow dots\t -\t Sonar pings
         Green boxes\t -\t Obstacles
         Red star\t -\t Goal"""
-    true_pose = (randint(15, 90), randint(5, 65), pi)
-    true_pose = (90,50,0) # fails without obstacle avoidance
+    true_pose = (20,10,pi) 
+    this_goal = (50,50,0)
     this_map = mapdef()
     this_sonar = ogmap.Sonar(NUM_THETA = 10, GAUSS_VAR = 0.01)
-    this_ens = mcl.Ensemble(pose = true_pose
-                        , acc_var = np.array([[.001],[.001]]))
-    this_robot = Robot_HA(true_pose, this_map, this_sonar, this_ens)
+    this_robot = Robot_HA(true_pose, this_goal, this_map, this_sonar)
     plt.ion()
     this_robot.automate()

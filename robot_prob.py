@@ -1,77 +1,89 @@
 import numpy as np
 import ogmap
+import locate
 from mapdef import mapdef, NTHETA
+import mcl
 import matplotlib.pyplot as plt
 from math import pi, exp, sin, cos
-import matplotlib.cm as cm
+from random import randint
+from robot import Robot
 
-class Robot():
-    def __init__(self, pose, goal, this_map, sonar):
-	''' Create an instance of robot
-	Args:
-	    pose - 1x3 array, initial x, y, phi pose
-	    this_map - Ogmap
-	    sonar - Sonar
-	    '''
-        self.pose = np.array(pose)
-        self.vel = np.array([0,0])
+
+class RobotProb(Robot):
+    def __init__(self, pose, this_map, sonar, ensemble):
+        self.pose = np.reshape(np.array(pose), (3, 1))
+        self.vel = np.array([[0],[0]])
         self.this_map = this_map
         self.sonar = sonar
+        self.ensemble = ensemble
         
-        self.goal = goal
+        self.control_std = 0.01
+        
+        self.goal = (50, 50, pi)
         self.goal_radius = 3
         self.goal_attained = False
         self.crashed = False
 
-        self.vel_max = 1
-        self.omega_max = 0.1
+        self.vel_max = 3
+        self.omega_max = 0.3
         self.displacement_slowdown = 25
         self.avoid_threshold = 5
-        self.flee_vec = np.array((0,0))
         
     def command(self, control_x, control_v):
         x0, y0, phi = self.pose
         vr, omega = self.vel
         vr = min(vr, self.this_map.ray_trace(self.pose, 0, self.vel_max))
-        if self.this_map.ray_trace(self.pose, 0, self.vel_max) < vr:
+        random_move =np.random.normal(0, self.control_std, (3, 1))
+        random_dist = np.linalg.norm(random_move[0:2])
+        if self.this_map.ray_trace(self.pose, 0, self.vel_max) < vr+random_dist:
             self.crashed = True
         else:
-            self.dx = np.array((vr*np.cos(phi), vr*np.sin(phi), omega))
-            self.pose = self.pose + self.dx + control_x
+            self.dx = (vr*np.cos(phi), vr*np.sin(phi), omega)
+            self.pose = self.pose + self.dx + control_x \
+                + random_move 
             self.vel = self.vel + control_v
+            try:
+                self.ensemble.pf_update(control_x, control_v)
+            except:
+                pass
     
     def measure(self):
         scan = self.sonar.simulate_scan(self.pose, self.this_map)
         try:
             self.last_scan = self.sonar.maxmin_filter(scan)
+            self.ensemble.pf_sonar(scan, self.sonar, self.this_map)
+            pose_guess, _ = self.estimate_state()
+            self.ensemble.inject_random(pose_guess, scan, self.sonar,
+                self.this_map)
         except ValueError, BadScanError:
             pass
         
     def estimate_state(self):
         """return best guess of robot state"""
-        return (self.pose, self.vel)
+        idx_guess = np.argmax(self.ensemble.weight)
+        pos_guess = self.ensemble.x_ens[:, idx_guess]
+        vel_guess = self.ensemble.v_ens[:, idx_guess]
+        return (pos_guess, vel_guess)
 
     def flee_vector(self):
         """return unit vector for avoiding obstacles"""
-        x0, y0, phi = self.pose
         pings = self.last_scan.pings
-        xs = [cos(ping[0]+phi) / (ping[1]+1) for ping in pings]
-        ys = [sin(ping[0]+phi) / (ping[1]+1) for ping in pings]
-        avoid_vec = (-1*np.sum(xs), -1*np.sum(ys))
+        xs = [cos(ping[0]) / (ping[1]+1) for ping in pings]
+        ys = [sin(ping[0]) / (ping[1]+1) for ping in pings]
+        avoid_vec = (np.sum(xs), np.sum(ys))
         return (avoid_vec / np.linalg.norm(avoid_vec))
 
     def control_policy(self):
         '''return appropriate control vectors'''
-        control_x = np.array([0,0,0])
+        control_x = np.array([[0],[0],[0]])
         pos_guess, vel_guess = self.estimate_state()
         displacement = (self.goal-pos_guess)[0:2]
         displacement_norm = np.linalg.norm(displacement)
-        self.flee_vec = self.flee_vector()
 
         if min(self.last_scan.rs) < self.avoid_threshold:
             print min(self.last_scan.rs)
             print 'AVOID!'
-            vel_des_rect = self.flee_vec
+            vel_des_rect = self.flee_vector()
         else:
             vel_des_rect = displacement / displacement_norm
         vx_des = vel_des_rect[0]
@@ -82,49 +94,24 @@ class Robot():
             exp(-displacement_norm/self.displacement_slowdown))
         vel_des_r = self.vel_max * slowdown_factor
         vel_des_phi = self.omega_max*(phi_des%(2*pi) - phi_guess%(2*pi))
-        vel_des_pol = np.array((vel_des_r, vel_des_phi))
+        vel_des_pol = (vel_des_r, vel_des_phi)
         if displacement_norm <= self.goal_radius:
-            vel_des_pol = np.array((0,0))
+            vel_des_pol = (0,0)
             self.goal_attained = True
-        control_v = vel_des_pol - vel_guess
+        control_v = np.reshape(vel_des_pol - vel_guess, (2, 1))
 
         return (control_x, control_v)
     
     def show_state(self):
-        x0, y0, phi = self.pose
-        plt.cla()
-        plt.imshow(self.this_map.grid
-                , interpolation='none'
-                , cmap=cm.Greys_r
-                , origin='lower'
-                )
+        self.ensemble.show_map_scan(col = 'b'
+                            , scan = self.last_scan
+                            , this_map = self.this_map
+                            , pose = self.pose
+                            )
         plt.plot(self.goal[0]
                 , self.goal[1]
                 , '*', color='r'
                 , markersize = 20)
-        plt.plot(x0
-                , y0
-                , 'o', color='g'
-                , markersize=10
-                )
-        plt.quiver(x0
-                , y0
-                , np.cos(phi)
-                , np.sin(phi)
-                )
-        plt.quiver(x0
-                , y0
-                , self.flee_vec[0]
-                , self.flee_vec[1]
-                , color='r'
-                )
-        plt.plot(x0 + self.last_scan.rs*np.cos(self.last_scan.thetas + phi)
-                , y0 + self.last_scan.rs*np.sin(self.last_scan.thetas + phi)
-                , '.', color = 'y'
-                , markersize = 10 
-                )
-        plt.xlim(0, 100) 
-        plt.ylim(0, 100)
         plt.draw()
     
     def automate(self, numsteps = 100):
@@ -147,10 +134,12 @@ if __name__ == "__main__":
         Yellow dots\t -\t Sonar pings
         Green boxes\t -\t Obstacles
         Red star\t -\t Goal"""
-    true_pose = (20, 90, pi)
-    this_goal = (50,50,0)
+    true_pose = (randint(15, 90), randint(5, 65), pi)
+    true_pose = (50,90,-90) # fails without obstacle avoidance
     this_map = mapdef()
     this_sonar = ogmap.Sonar(NUM_THETA = 10, GAUSS_VAR = .01)
-    this_robot = Robot(true_pose, this_goal, this_map, this_sonar)
+    this_ens = mcl.Ensemble(pose = true_pose
+                        , acc_var = np.array([[.001],[.001]]))
+    this_robot = Robot(true_pose, this_map, this_sonar, this_ens)
     plt.ion()
     this_robot.automate()
