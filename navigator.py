@@ -12,13 +12,18 @@ from math import exp, pi
 
 def vel_des_rect2pol(vel_des_rect, omega_max, phi_guess, **kwargs):
     """convert desired velocity from rectangular to polar coords"""
+    vel_des_r = np.linalg.norm(vel_des_rect)
+    vel_des_omega = omega_des(vel_des_rect, omega_max, phi_guess)
+    vel_des_pol = np.array((vel_des_r, vel_des_omega))
+    return vel_des_pol
+
+def omega_des(vel_des_rect, omega_max, phi_guess, **kwargs):
+    """convert desired velocity from rectangular to polar coords"""
     vx_des = vel_des_rect[0]
     vy_des = vel_des_rect[1]
-    vel_des_r = np.linalg.norm(vel_des_rect)
     phi_des = np.arctan2(vy_des, vx_des)
-    vel_des_phi = omega_max * (phi_des % (2*pi) - phi_guess % (2*pi))
-    vel_des_pol = np.array((vel_des_r, vel_des_phi))
-    return vel_des_pol
+    vel_des_omega = omega_max * (phi_des % (2*pi) - phi_guess % (2*pi))
+    return vel_des_omega
 
 ## Policies
 
@@ -30,16 +35,19 @@ def gtg_policy(slowdown_radius, vel_max, vel_guess, goal_vector, **kwargs):
     slowdown_factor = (1 - exp(-displacement_norm / slowdown_radius))
     vel_des_r = vel_max * slowdown_factor
     vel_des_rect = vel_des_r * goal_vector / displacement_norm
-    vel_des_pol = vel_des_rect2pol(vel_des_rect, **kwargs)
-    control_v = vel_des_pol - vel_guess
+    vel_des_omega = omega_des(vel_des_rect, **kwargs)
+    vel_des = np.append(vel_des_rect, vel_des_omega)
+    control_v = vel_des - vel_guess
     return control_v
 
 def ao_policy(vel_max, vel_guess, flee_vector, **kwargs):
     """control_policy for avoid obstacle behavior
     
     flee from obstacles"""
-    vel_des_pol = vel_des_rect2pol(vel_max * flee_vector, **kwargs)
-    control_v = vel_des_pol - vel_guess
+    vel_des_rect = vel_max * flee_vector
+    vel_des_omega = omega_des(vel_des_rect, **kwargs)
+    vel_des = np.append(vel_des_rect, vel_des_omega)
+    control_v = vel_des - vel_guess
     return control_v
 
 def fw_cc_policy(vel_guess, flee_vector, vel_max, **kwargs):
@@ -48,8 +56,10 @@ def fw_cc_policy(vel_guess, flee_vector, vel_max, **kwargs):
     Move normal to obstacle in ccw sense"""
     flee_x, flee_y = flee_vector
     fw_cc_vector = (-flee_y, flee_x)
-    vel_des_pol = vel_des_rect2pol(vel_max * fw_cc_vector, **kwargs)
-    control_v = vel_des_pol - vel_guess
+    vel_des_rect = vel_max * fw_cc_vector
+    vel_des_omega = omega_des(vel_des_rect, **kwargs)
+    vel_des = np.append(vel_des_rect, vel_des_omega)
+    control_v = vel_des - vel_guess
     return control_v
 
 def fw_c_policy(vel_guess, flee_vector, vel_max, **kwargs):
@@ -58,16 +68,18 @@ def fw_c_policy(vel_guess, flee_vector, vel_max, **kwargs):
     Move normal to obstacle in cw sense"""
     flee_x, flee_y = flee_vector
     fw_c_vector = (flee_y, -flee_x)
-    vel_des_pol = vel_des_rect2pol(vel_max * fw_c_vector, **kwargs)
-    control_v = vel_des_pol - vel_guess
+    vel_des_rect = vel_max * fw_c_vector
+    vel_des_omega = omega_des(vel_des_rect, **kwargs)
+    vel_des = np.append(vel_des_rect, vel_des_omega)
+    control_v = vel_des - vel_guess
     return control_v
 
 def goal_policy(vel_guess,**kwargs):
     """control policy for goal reached behavior
     
     Stop"""
-    vel_des_pol = np.array((0,0))
-    control_v = vel_des_pol - vel_guess
+    vel_des = np.array((0,0,0))
+    control_v = vel_des - vel_guess
     return control_v
 
 ## Guard Conditions

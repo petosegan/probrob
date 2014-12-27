@@ -54,11 +54,11 @@ class Robot():
 
     def flee_vector(self):
         """return unit vector for avoiding obstacles"""
-        eps = 1
+        eps = 0.25
         x0, y0, phi = self.pose
         pings = self.last_scan.pings
-        xs = [cos(ping[0]+phi) / (ping[1]+eps) for ping in pings]
-        ys = [sin(ping[0]+phi) / (ping[1]+eps) for ping in pings]
+        xs = [cos(ping[0]+phi) / (ping[1]+eps)**2 for ping in pings]
+        ys = [sin(ping[0]+phi) / (ping[1]+eps)**2 for ping in pings]
         avoid_vec = (-1*np.sum(xs), -1*np.sum(ys))
         return (avoid_vec / np.linalg.norm(avoid_vec))
 
@@ -95,11 +95,11 @@ class Robot():
     def show_state(self):
         x0, y0, phi = self.pose
         plt.cla()
-        plt.imshow(self.this_map.grid
-                , interpolation='none'
-                , cmap=cm.Greys_r
-                , origin='lower'
-                )
+        #plt.imshow(self.this_map.grid
+         #       , interpolation='none'
+          #      , cmap=cm.Greys_r
+           #     , origin='lower'
+            #    )
         plt.plot(self.goal[0]
                 , self.goal[1]
                 , '*', color='r'

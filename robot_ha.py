@@ -14,8 +14,8 @@ class Robot_HA(Robot):
         Robot.__init__(self, pose, goal, this_map, sonar) 
 
         self.navigator = navigator
-	self.avoid_threshold = 10
-        self.guard_fatness = 3
+	self.avoid_threshold = 6
+        self.guard_fatness = 5
 
         self.fixed_params = {'omega_max': self.omega_max
                             ,'vel_max'  : self.vel_max
@@ -59,10 +59,10 @@ if __name__ == "__main__":
         Yellow dots\t -\t Sonar pings
         Green boxes\t -\t Obstacles
         Red star\t -\t Goal"""
-    true_pose = (20,10,pi) 
+    true_pose = (20,90,pi) 
     this_goal = (50,50,0)
     this_map = mapdef()
-    this_sonar = ogmap.Sonar(NUM_THETA = 10, GAUSS_VAR = 0.01)
+    this_sonar = ogmap.Sonar(NUM_THETA = 16, GAUSS_VAR = 0.01)
     this_robot = Robot_HA(true_pose, this_goal, this_map, this_sonar)
     plt.ion()
-    this_robot.automate()
+    this_robot.automate(500)
