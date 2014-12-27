@@ -2,7 +2,7 @@ import numpy as np
 import ogmap
 from mapdef import mapdef, NTHETA
 import matplotlib.pyplot as plt
-from math import pi, exp, sin, cos
+from math import pi, exp, sin, cos, sqrt
 import matplotlib.cm as cm
 
 class Robot():
@@ -14,7 +14,7 @@ class Robot():
 	    sonar - Sonar
 	    '''
         self.pose = np.array(pose)
-        self.vel = np.array([0,0])
+        self.vel = np.array([0,0,0])
         self.this_map = this_map
         self.sonar = sonar
         
@@ -31,12 +31,13 @@ class Robot():
         
     def command(self, control_x, control_v):
         x0, y0, phi = self.pose
-        vr, omega = self.vel
+        vx, vy, omega = self.vel
+        vr = sqrt(vx**2 + vy**2)
         vr = min(vr, self.this_map.ray_trace(self.pose, 0, self.vel_max))
         if self.this_map.ray_trace(self.pose, 0, self.vel_max) < vr:
             self.crashed = True
         else:
-            self.dx = np.array((vr*np.cos(phi), vr*np.sin(phi), omega))
+            self.dx = self.vel
             self.pose = self.pose + self.dx + control_x
             self.vel = self.vel + control_v
     
@@ -53,10 +54,11 @@ class Robot():
 
     def flee_vector(self):
         """return unit vector for avoiding obstacles"""
+        eps = 1
         x0, y0, phi = self.pose
         pings = self.last_scan.pings
-        xs = [cos(ping[0]+phi) / (ping[1]+1) for ping in pings]
-        ys = [sin(ping[0]+phi) / (ping[1]+1) for ping in pings]
+        xs = [cos(ping[0]+phi) / (ping[1]+eps) for ping in pings]
+        ys = [sin(ping[0]+phi) / (ping[1]+eps) for ping in pings]
         avoid_vec = (-1*np.sum(xs), -1*np.sum(ys))
         return (avoid_vec / np.linalg.norm(avoid_vec))
 
@@ -80,13 +82,13 @@ class Robot():
         phi_guess = pos_guess[2]
         slowdown_factor = (1 -
             exp(-displacement_norm/self.displacement_slowdown))
-        vel_des_r = self.vel_max * slowdown_factor
+        vel_des_rect *= self.vel_max * slowdown_factor
         vel_des_phi = self.omega_max*(phi_des%(2*pi) - phi_guess%(2*pi))
-        vel_des_pol = np.array((vel_des_r, vel_des_phi))
+        vel_des = np.array((vel_des_rect[0], vel_des_rect[1], vel_des_phi))
         if displacement_norm <= self.goal_radius:
-            vel_des_pol = np.array((0,0))
+            vel_des = np.array((0,0))
             self.goal_attained = True
-        control_v = vel_des_pol - vel_guess
+        control_v = vel_des - vel_guess
 
         return (control_x, control_v)
     
