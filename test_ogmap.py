@@ -78,6 +78,7 @@ class TestSonar():
         assert sonar.r_rez == 0.5
 
         # test for an unfortunate and hard to notice bug
+	# namely, that probability densities integrate to one
         assert round(np.sum(sonar.p_exp) - 1, 10) == 0
         assert round(np.sum(sonar.p_uni) - 1, 10) == 0
         assert round(np.sum(sonar.p_max) - 1, 10) == 0
