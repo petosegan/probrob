@@ -32,9 +32,10 @@ class Robot():
     def command(self, control_x, control_v):
         x0, y0, phi = self.pose
         vx, vy, omega = self.vel
-        vr = sqrt(vx**2 + vy**2)
-        vr = min(vr, self.this_map.ray_trace(self.pose, 0, self.vel_max))
-        if self.this_map.ray_trace(self.pose, 0, self.vel_max) < vr:
+        vr = np.linalg.norm((vx, vy))
+        obst_distance = self.this_map.ray_trace(self.pose, 0, self.vel_max)
+        vr = min(vr, obst_distance)
+        if obst_distance < vr:
             self.crashed = True
         else:
             self.dx = self.vel
@@ -57,9 +58,9 @@ class Robot():
         eps = 0.25
         x0, y0, phi = self.pose
         pings = self.last_scan.pings
-        xs = [cos(ping[0]+phi) / (ping[1]+eps)**2 for ping in pings]
-        ys = [sin(ping[0]+phi) / (ping[1]+eps)**2 for ping in pings]
-        avoid_vec = (-1*np.sum(xs), -1*np.sum(ys))
+        xs = [-cos(ping[0]+phi) / (ping[1]+eps)**2 for ping in pings]
+        ys = [-sin(ping[0]+phi) / (ping[1]+eps)**2 for ping in pings]
+        avoid_vec = (np.sum(xs), np.sum(ys))
         return (avoid_vec / np.linalg.norm(avoid_vec))
 
     def control_policy(self):
@@ -95,11 +96,11 @@ class Robot():
     def show_state(self):
         x0, y0, phi = self.pose
         plt.cla()
-        #plt.imshow(self.this_map.grid
-         #       , interpolation='none'
-          #      , cmap=cm.Greys_r
-           #     , origin='lower'
-            #    )
+        plt.imshow(self.this_map.grid
+                , interpolation='none'
+                , cmap=cm.Greys_r
+                , origin='lower'
+                )
         plt.plot(self.goal[0]
                 , self.goal[1]
                 , '*', color='r'
