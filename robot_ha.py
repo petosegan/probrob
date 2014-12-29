@@ -56,7 +56,7 @@ class Robot_HA(Robot):
             self.goal_attained = True
 
         policy = self.navigator.update(robot_state)
-        control_v = policy(**robot_state)
+        control_v = self.vcontroller(policy(**robot_state))
 
         return (control_x, control_v)
 

@@ -11,13 +11,8 @@ from mapdef import mapdef, NTHETA
 import matplotlib.pyplot as plt
 from math import pi, exp, sin, cos, sqrt
 import matplotlib.cm as cm
+from utils import *
 
-#utility functions
-
-def rect2phi(rect_vec):
-    return np.arctan2(rect_vec[1], rect_vec[0])
-
-#Robot class
 
 class Robot():
     def __init__(self, parameters, sonar):
@@ -106,9 +101,9 @@ class Robot():
             vel_des_rect = self.flee_vector()
         else:
             vel_des_rect = displacement / distance_to_goal
-            vel_des_rect *= self.slowdown_factor(distance_to_goal)
+            vel_des_rect *= (1 - exp(-distance_to_goal / self.displacement_slowdown))
 
-        return (np.array((0,0,0)), self.control_v_des(vel_des_rect))
+        return (np.array((0,0,0)), self.vcontroller(vel_des_rect))
         
     def estimate_state(self):
         """return best guess of robot state"""
@@ -124,7 +119,7 @@ class Robot():
         avoid_vec = np.array((np.sum(xs), np.sum(ys)))
         return (avoid_vec / np.linalg.norm(avoid_vec))
 
-    def control_v_des(self, vel_des_rect):
+    def vcontroller(self, vel_des_rect):
         vel_des_phi = self.omega_des(vel_des_rect)
         vel_des = np.append(vel_des_rect, vel_des_phi)
         _, vel_guess = self.estimate_state()
@@ -132,9 +127,6 @@ class Robot():
 
     def omega_des(self, vel_des_rect):
         return self.omega_max * (rect2phi(vel_des_rect) % (2*pi) - self.estimate_state()[0][2] % (2*pi))
-
-    def slowdown_factor(self, distance_to_goal):
-        return (1 - exp(-distance_to_goal / self.displacement_slowdown))
 
     def command(self, control_x, control_v):
         x0, y0, phi = self.pose
