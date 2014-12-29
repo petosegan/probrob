@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+
+# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 '''Localization Helper Function
 
 This module provides functions for calculating the likelihood of sonar scan
@@ -44,7 +47,8 @@ def loglike_map(pose, scan, this_map, this_sonar,ll_N = 100
     ll = np.zeros((ll_N, ll_N))
     for i, xpos in np.ndenumerate(xs):
         for j, ypos in np.ndenumerate(ys):
-            ll[j][i] = scan_loglikelihood((xpos,ypos, phi_guess)
+            this_pose = np.array((xpos, ypos, phi_guess))
+            ll[j][i] = scan_loglikelihood(this_pose
                                         , scan
                                         , this_map
                                         , this_sonar
@@ -81,11 +85,13 @@ def loglike_map(pose, scan, this_map, this_sonar,ll_N = 100
         # plt.ylim(0, ll_N)
         plt.draw()
     return (ll, (xs, ys))
+
+
 if __name__ == "__main__":
     from mapdef import mapdef
-    NTHETA = 20
+    NTHETA = 2
     
-    true_pose = (50,50, 0)
+    true_pose = np.array((50,50, 0))
     x0, y0, phi = true_pose
     phi_guess = phi
     
@@ -93,5 +99,6 @@ if __name__ == "__main__":
     this_map = mapdef()
        
     scan = this_sonar.simulate_scan(true_pose, this_map)
-    
-    loglike_map(true_pose, scan, this_map, this_sonar, PLOT_ON = False)
+    plt.ion() 
+    loglike_map(true_pose, scan, this_map, this_sonar, PLOT_ON = True)
+    plt.show(block=True)

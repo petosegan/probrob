@@ -129,17 +129,13 @@ class Robot():
         return self.omega_max * (rect2phi(vel_des_rect) % (2*pi) - self.estimate_state()[0][2] % (2*pi))
 
     def command(self, control_x, control_v):
-        x0, y0, phi = self.pose
         vx, vy, omega = self.vel
         vr = np.linalg.norm((vx, vy))
         forward_obstacle_distance = self.this_map.ray_trace(self.pose, 0, self.vel_max)
         vr = min(vr, forward_obstacle_distance)
-        if forward_obstacle_distance < vr:
-            self.crashed = True
-        else:
-            self.dx = self.vel
-            self.pose = self.pose + self.dx + control_x
-            self.vel = self.vel + control_v
+        self.dx = self.vel
+        self.pose = self.pose + self.dx + control_x
+        self.vel = self.vel + control_v
 
 
 class Parameters():

@@ -1,3 +1,11 @@
+#!/usr/bin/env python
+
+"""
+robot_prob - robot simulation using probabilistic localization
+"""
+
+# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
+
 import numpy as np
 import ogmap
 import locate
@@ -6,42 +14,42 @@ import mcl
 import matplotlib.pyplot as plt
 from math import pi, exp, sin, cos
 from random import randint
-from robot import Robot
+from robot import Robot, Goal, Parameters
 
+class ParametersProb(Parameters):
+    def __init__(self
+            , vel_max=3
+            , omega_max=0.1
+            , displacement_slowdown=25
+            , avoid_threshold=5
+            , control_std=0.01
+            ):
+        Parameters.__init__(self, vel_max, omega_max, displacement_slowdown, avoid_threshold)
+        self.control_std = control_std
 
 class RobotProb(Robot):
-    def __init__(self, pose, this_map, sonar, ensemble):
-        self.pose = np.reshape(np.array(pose), (3, 1))
-        self.vel = np.array([[0],[0]])
-        self.this_map = this_map
-        self.sonar = sonar
-        self.ensemble = ensemble
-        
-        self.control_std = 0.01
-        
-        self.goal = (50, 50, pi)
-        self.goal_radius = 3
-        self.goal_attained = False
-        self.crashed = False
+    def __init__(self, parameters, sonar):
+        Robot.__init__(self, parameters, sonar)
+	self.control_std = self.parameters.control_std
 
-        self.vel_max = 3
-        self.omega_max = 0.3
-        self.displacement_slowdown = 25
-        self.avoid_threshold = 5
+    def situate(self
+            , this_map
+            , this_pose
+            , this_goal
+            , this_ens):
+        Robot.situate(self, this_map, this_pose, this_goal)
+        self.ensemble = this_ens
         
     def command(self, control_x, control_v):
-        x0, y0, phi = self.pose
-        vr, omega = self.vel
-        vr = min(vr, self.this_map.ray_trace(self.pose, 0, self.vel_max))
-        random_move =np.random.normal(0, self.control_std, (3, 1))
+        Robot.command(self, control_x, control_v)
+
+        forward_obstacle_distance = self.this_map.ray_trace(self.pose, 0, self.vel_max)
+        random_move = np.random.normal(0, self.control_std, 3)
         random_dist = np.linalg.norm(random_move[0:2])
-        if self.this_map.ray_trace(self.pose, 0, self.vel_max) < vr+random_dist:
+        if forward_obstacle_distance < random_dist:
             self.crashed = True
         else:
-            self.dx = (vr*np.cos(phi), vr*np.sin(phi), omega)
-            self.pose = self.pose + self.dx + control_x \
-                + random_move 
-            self.vel = self.vel + control_v
+            self.pose += random_move 
             try:
                 self.ensemble.pf_update(control_x, control_v)
             except:
@@ -61,72 +69,35 @@ class RobotProb(Robot):
     def estimate_state(self):
         """return best guess of robot state"""
         idx_guess = np.argmax(self.ensemble.weight)
-        pos_guess = self.ensemble.x_ens[:, idx_guess]
-        vel_guess = self.ensemble.v_ens[:, idx_guess]
+	pos_guess = self.ensemble.x_ens[idx_guess, :]
+	vel_guess = self.ensemble.v_ens[idx_guess, :]
         return (pos_guess, vel_guess)
 
-    def flee_vector(self):
-        """return unit vector for avoiding obstacles"""
-        pings = self.last_scan.pings
-        xs = [cos(ping[0]) / (ping[1]+1) for ping in pings]
-        ys = [sin(ping[0]) / (ping[1]+1) for ping in pings]
-        avoid_vec = (np.sum(xs), np.sum(ys))
-        return (avoid_vec / np.linalg.norm(avoid_vec))
-
-    def control_policy(self):
-        '''return appropriate control vectors'''
-        control_x = np.array([[0],[0],[0]])
-        pos_guess, vel_guess = self.estimate_state()
-        displacement = (self.goal-pos_guess)[0:2]
-        displacement_norm = np.linalg.norm(displacement)
-
-        if min(self.last_scan.rs) < self.avoid_threshold:
-            print min(self.last_scan.rs)
-            print 'AVOID!'
-            vel_des_rect = self.flee_vector()
-        else:
-            vel_des_rect = displacement / displacement_norm
-        vx_des = vel_des_rect[0]
-        vy_des = vel_des_rect[1]
-        phi_des = np.arctan2(vy_des, vx_des)
-        phi_guess = pos_guess[2]
-        slowdown_factor = (1 -
-            exp(-displacement_norm/self.displacement_slowdown))
-        vel_des_r = self.vel_max * slowdown_factor
-        vel_des_phi = self.omega_max*(phi_des%(2*pi) - phi_guess%(2*pi))
-        vel_des_pol = (vel_des_r, vel_des_phi)
-        if displacement_norm <= self.goal_radius:
-            vel_des_pol = (0,0)
-            self.goal_attained = True
-        control_v = np.reshape(vel_des_pol - vel_guess, (2, 1))
-
-        return (control_x, control_v)
-    
     def show_state(self):
-        self.ensemble.show_map_scan(col = 'b'
-                            , scan = self.last_scan
-                            , this_map = self.this_map
-                            , pose = self.pose
-                            )
-        plt.plot(self.goal[0]
-                , self.goal[1]
-                , '*', color='r'
-                , markersize = 20)
+	x0, y0, phi = self.pose
+	plt.cla()
+	self.this_map.show()
+	plt.plot(x0
+		, y0
+		, 'o'
+		, color='b'
+		, markersize=10
+		)
+	plt.quiver(x0
+		, y0
+		, np.cos(phi)
+		, np.sin(phi)
+		, color='g'
+		, headwidth=1.5
+		, headlength=10
+		)
+	self.last_scan.show()
+	self.ensemble.show()
+        self.goal.show()
+	plt.xlim(0, self.this_map.N)
+	plt.ylim(0, self.this_map.N)
         plt.draw()
-    
-    def automate(self, numsteps = 100):
-        for step in range(numsteps):
-            if self.goal_attained:
-                print 'GOAL REACHED'
-                break
-            if self.crashed:
-                print 'CRASH!'
-                break
-            self.measure()
-            self.show_state()
-            control_x, control_v = self.control_policy()
-            self.command(control_x, control_v)
-           
+          
 if __name__ == "__main__":
     print """Legend:
         Yellow star\t -\t True position of robot
@@ -134,12 +105,23 @@ if __name__ == "__main__":
         Yellow dots\t -\t Sonar pings
         Green boxes\t -\t Obstacles
         Red star\t -\t Goal"""
-    true_pose = (randint(15, 90), randint(5, 65), pi)
-    true_pose = (50,90,-90) # fails without obstacle avoidance
+
+    parameters = ParametersProb()
+    this_goal = Goal(location=(50,50,pi)
+            , radius=3)
+    true_pose = (20,20,-90) # fails without obstacle avoidance
     this_map = mapdef()
-    this_sonar = ogmap.Sonar(NUM_THETA = 10, GAUSS_VAR = .01)
+    this_sonar = ogmap.Sonar(NUM_THETA = 16, GAUSS_VAR = .0001)
     this_ens = mcl.Ensemble(pose = true_pose
-                        , acc_var = np.array([[.001],[.001]]))
-    this_robot = Robot(true_pose, this_map, this_sonar, this_ens)
+		    , N=10
+                    , acc_var = np.array((.001, .001, .001))
+		    , meas_var = np.array((.01, .01, .01)))
+    this_robot = RobotProb(parameters, this_sonar)
+    this_robot.situate(this_map, true_pose, this_goal, this_ens)
+
     plt.ion()
+    fig = plt.figure()
+    fig.set_size_inches(20, 20)
+    plt.get_current_fig_manager().resize(1000,1000)
+
     this_robot.automate()
