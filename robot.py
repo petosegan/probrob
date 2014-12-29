@@ -135,6 +135,7 @@ class Robot():
         vr = min(vr, forward_obstacle_distance)
         self.dx = self.vel
         self.pose = self.pose + self.dx + control_x
+        self.pose[2] = self.pose[2]%(2*pi)
         self.vel = self.vel + control_v
 
 
