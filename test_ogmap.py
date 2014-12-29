@@ -65,17 +65,6 @@ class TestScan():
 class TestSonar():
     def test_init(self):
         """test instantiation of Sonar"""
-        assert sonar.NUM_THETA == 200
-        assert round(sonar.GAUSS_VAR - 0.01, 5) == 0
-        assert sonar.RMAX == 100
-        assert sonar.EXP_LEN == 0.1
-        assert sonar.w_exp == 0.001
-        assert sonar.w_gauss == 20
-        assert sonar.w_uni == 0.001
-        assert sonar.w_max_hit == 2
-        assert sonar.w_max_miss == 20
-        assert sonar.w_min == 0.001
-        assert sonar.r_rez == 0.5
 
         # test for an unfortunate and hard to notice bug
 	# namely, that probability densities integrate to one

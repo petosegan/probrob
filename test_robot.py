@@ -17,16 +17,19 @@ def setup_module(module):
     """setup state for tests"""
     global test_robot
 
-    this_pose = (0,0,0)
-    this_goal = (10,10,pi)
-    this_ogmap = ogmap.OGMap(N=1)
+    parameters = robot.Parameters()
     this_sonar = ogmap.Sonar(NUM_THETA=1
                            , GAUSS_VAR = 0.1**2)
-    test_robot = robot.Robot(this_pose
-                           , this_goal
-                           , this_ogmap
+    test_robot = robot.Robot(parameters
                            , this_sonar
                            )
+
+    this_pose = (0,0,0)
+    this_goal = robot.Goal(location=(10,10,0)
+		    , radius=3)
+    this_map = ogmap.OGMap(N=1)
+
+    test_robot.situate(this_map, this_pose, this_goal)
 
 
 class TestRobot():

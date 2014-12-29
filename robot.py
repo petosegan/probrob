@@ -139,7 +139,12 @@ class Robot():
 
 
 class Parameters():
-    def __init__(self, vel_max, omega_max, displacement_slowdown, avoid_threshold):
+    def __init__(self
+	       , vel_max=1
+	       , omega_max=0.1
+	       , displacement_slowdown=25
+	       , avoid_threshold=5
+	       ):
         self.vel_max = vel_max
         self.omega_max = omega_max
         self.displacement_slowdown = displacement_slowdown
