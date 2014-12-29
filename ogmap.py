@@ -51,7 +51,6 @@ class OGMap():
                     , cmap = cm.Greys_r
                     , origin='lower'
                     )
-        plt.draw()
         
     def rect(self, x0, y0, width, height):
         '''Place a rectangle with lower left corner at (x0, y0) 
@@ -284,6 +283,14 @@ class Scan():
         self.thetas = thetas
         self.rs = rs
         self.pings = zip(self.thetas, self.rs)
+	self.obst_distance = min(self.rs)
+    def show_scan(self):
+	plt.plot(self.x0 + self.rs*np.cos(self.thetas + self.phi)
+		,self.y0 + self.rs*np.sin(self.thetas + self.phi)
+		, '.'
+		, color='y'
+		, markersize=10
+		)
         
 class Rect():
     '''Representation of a rectangular obstacle'''
