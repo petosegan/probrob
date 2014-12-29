@@ -61,7 +61,7 @@ class Robot():
         self.goal.show()
         self.show_pose()
         self.show_flee_vector()
-        self.last_scan.show_scan()
+        self.last_scan.show()
         plt.xlim(0, 100) 
         plt.ylim(0, 100)
         plt.draw()

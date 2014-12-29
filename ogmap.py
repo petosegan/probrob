@@ -1,8 +1,13 @@
+#!/usr/bin/env python
+
+# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
+
 '''Occupancy Grid Map Representation and Operations
 
 This module implements a binary occupancy grid representation of a map of the
 environment, and related operations useful for localization and mapping.
 '''
+
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -70,7 +75,7 @@ class OGMap():
           theta (radian): heading of ray_trace, in the robot frame
           rmax (int): maximum range of ray tracing
         '''
-	assert pose.shape==(3,)
+        assert pose.shape==(3,)
         dists = []
         x0, y0, phi = pose
         p = (x0, y0)
@@ -109,11 +114,7 @@ class OGMap():
         x0, y0,phi = pose
         theta = theta+phi
         ray_len = self.ray_trace(pose, theta, rmax)
-        plt.imshow(self.grid
-                    , interpolation = 'none'
-                    , cmap = cm.Greys_r
-                    , origin='lower'
-                    )
+        self.show()
         plt.plot(x0, y0, '.', color='b', markersize = 20)
         plt.plot([x0
                 , x0+ray_len*np.cos(theta)]
@@ -159,26 +160,31 @@ class OGMap():
         
 
 class Sonar():
-    def __init__(self, NUM_THETA = 200, GAUSS_VAR = (0.1)**2):
+    def __init__(self
+            , NUM_THETA = 200
+            , GAUSS_VAR = (0.1)**2
+            , weights={'w_exp':0.001
+                , 'w_gauss':20
+                , 'w_uni':0.001
+                , 'w_max_hit':2
+                , 'w_max_miss':20
+                , 'w_min':0.001
+                }
+            , params={'RMAX':100
+                , 'EXP_LEN':0.1
+                , 'r_rez':0.5
+                }
+            ):
         ''' Example sonar parameters '''
-        self.RMAX = 100             # max range
-        self.EXP_LEN = 0.1            # length scale for under-ranges
         self.NUM_THETA = NUM_THETA        # number of headings
         self.GAUSS_VAR = GAUSS_VAR    # variance of accurate readings
-        self.w_exp = 0.001            # weight for under-ranges
-        self.w_gauss = 20           # weight for accurate ranges
-        self.w_uni = 0.001           # weight for uniform glitches
-        # weight for max glitches, obstacle present
-        self.w_max_hit = 2          
-        # weight for max glitches, no obstacle present
-        self.w_max_miss = 20        
-        self.w_min = .001              # weight for min glitches
-        self.r_rez = 0.5              # resolution of range sensor
+        self.weights = weights
+        self.params = params
         
         self.thetas = np.linspace(0, 2*pi, self.NUM_THETA) #headings
-        self.rs = np.arange(0, self.RMAX, self.r_rez)
+        self.rs = np.arange(0, self.params['RMAX'], self.params['r_rez'])
         
-        self.p_exp = np.exp(-self.rs / self.EXP_LEN)
+        self.p_exp = np.exp(-self.rs / self.params['EXP_LEN'])
         self.p_exp /= np.sum(self.p_exp)
         self.p_uni = np.ones(len(self.rs))
         self.p_uni /= np.sum(self.p_uni)
@@ -187,15 +193,14 @@ class Sonar():
         self.p_min = np.zeros(len(self.rs))
         self.p_min[0] = 1
         
-        self.p_tot_partial = self.w_exp * self.p_exp \
-                            + self.w_uni * self.p_uni \
-                            + self.w_min * self.p_min
+        self.p_tot_partial = self.weights['w_exp'] * self.p_exp \
+                            + self.weights['w_uni'] * self.p_uni \
+                            + self.weights['w_min'] * self.p_min
 
-        
     def maxmin_filter(self, scan):
         '''Discard readings of 0 or RMAX, assumed to be spurious'''
         filtered = [(th, r) for (th, r) in scan.pings 
-                            if r > 0 and r < self.RMAX]
+                            if r > 0 and r < self.params['RMAX']]
         if not filtered:
             raise BadScanError
         else:
@@ -203,49 +208,40 @@ class Sonar():
         
     def simulate_scan(self, pose, this_map, PLOT_ON = False):
         '''Return a simulation of a sonar reading from point (x0, y0) '''
-	assert pose.shape==(3,)
+        pose = np.array(pose)
         x0, y0, phi = pose
         theta = self.thetas#headings
         r = self.rs #radius
         r_meas = []
-        
+
         for th in theta:
             r_meas.append(self.simulate_ping(pose, th, this_map))
-        
+
+        simscan = Scan(pose, theta, r_meas)
+
         if PLOT_ON:
-            ax = plt.subplot(111)
-            plt.imshow(this_map.grid
-                        , interpolation = 'none'
-                        , cmap = cm.Greys_r
-                        , origin='lower'
-                        )
-            plt.plot(x0+r_meas*np.cos(theta + phi)
-                    , y0+r_meas*np.sin(theta+phi)
-                    , '.'
-                    , color='r'
-                    )
+            this_map.show()
+            simscan.show(markersize=5)
             plt.plot(x0, y0, '.', color='b', markersize = 20) 
-            # plt.xlim(0, this_map.N)
-            # plt.ylim(0, this_map.N)
             plt.title('Simulated Sonar Scan')
             plt.draw()
-        
+
         return Scan(pose, theta, r_meas)
-        
+
     def simulate_ping(self, pose, th, this_map):
         '''Return a sample from the sonar probability density
-
         Args:
           pose (tuple): Robot pose, as (x, y) position and heading (rad)
           th (rad): Sensor heading, in robot frame
           this_map (OGMap): occupancy grid map'''
+
         p_tot = self.ping_pdf(pose, th, this_map)
-        # sample
         r_meas = np.random.choice(self.rs, p=p_tot)
         return r_meas
         
     def ping_pdf(self, pose, th, this_map):
         '''Return a sonar probability density of a specified ray'''
+
         x0, y0, phi = pose
         if this_map.TRACES_CACHED:
             x_idx = np.argmin(abs(this_map.xs - x0))
@@ -254,24 +250,24 @@ class Sonar():
                                     (th + phi))%(2*pi)))
             true_r = this_map.cache[x_idx][y_idx][th_idx]
         else:
-            true_r = this_map.ray_trace(pose, th, self.RMAX)
-        if true_r < self.RMAX:
+            true_r = this_map.ray_trace(pose, th, self.params['RMAX'])
+        if true_r < self.params['RMAX']:
             p_gauss = np.exp(-0.5*(self.rs - true_r)**2 / self.GAUSS_VAR)
             p_gauss /= np.sum(p_gauss)
-            w_gauss = self.w_gauss
-            w_max = self.w_max_hit
+            w_gauss = self.weights['w_gauss']
+            w_max = self.weights['w_max_hit']
         else:
             p_gauss = 0
             w_gauss = 0
-            w_max = self.w_max_miss
+            w_max = self.weights['w_max_miss']
 
-        # # weighted total probability
+        # weighted total probability
         p_tot = w_gauss * p_gauss + w_max * self.p_max + self.p_tot_partial
-        # # normalize
+        # normalize
         p_tot /= (np.sum(p_tot))
-        # # sample
         return p_tot
-        
+
+
 class Scan():
     '''Representation of a sonar scan result'''
     def __init__(self, pose, thetas, rs):
@@ -283,15 +279,18 @@ class Scan():
         self.thetas = thetas
         self.rs = rs
         self.pings = zip(self.thetas, self.rs)
-	self.obst_distance = min(self.rs)
-    def show_scan(self):
-	plt.plot(self.x0 + self.rs*np.cos(self.thetas + self.phi)
-		,self.y0 + self.rs*np.sin(self.thetas + self.phi)
-		, '.'
-		, color='y'
-		, markersize=10
-		)
-        
+        self.obst_distance = min(self.rs)
+
+    def show(self, markersize=10, color='y', **kwargs):
+        plt.plot(self.x0 + self.rs*np.cos(self.thetas + self.phi)
+                ,self.y0 + self.rs*np.sin(self.thetas + self.phi)
+                , '.'
+                , color=color
+                , markersize=markersize
+                , **kwargs
+                )
+
+
 class Rect():
     '''Representation of a rectangular obstacle'''
     def __init__(self, x0, y0, width, height):
@@ -304,14 +303,14 @@ class Rect():
         '''Check for overlap of point (x, y) with self'''
         return ((self.x0 <= x <= self.x0 + self.width) and (self.y0 <= y <=
             self.y0+self.height))
-        
+
+
 if __name__ == "__main__":
     from mapdef import mapdef, NTHETA
     this_map = mapdef()
     this_sonar = Sonar(NUM_THETA = 200, GAUSS_VAR = 1)
     pose = (50,50,0)
-    
+
     plt.ion()
-    #this_map.show()
     this_sonar.simulate_scan(pose, this_map, PLOT_ON = True)
     plt.show(block=True)
