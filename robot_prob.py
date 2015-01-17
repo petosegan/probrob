@@ -124,4 +124,4 @@ if __name__ == "__main__":
     fig.set_size_inches(20, 20)
     plt.get_current_fig_manager().resize(1000,1000)
 
-    this_robot.automate()
+    this_robot.automate(numsteps=1)

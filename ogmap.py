@@ -13,6 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from math import floor, pi
+import ray_trace
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
@@ -67,6 +68,7 @@ class OGMap():
         self.edges.append((x0, y0+height, x0+width, y0+height))
         self.grid[y0:y0+height, x0:x0+width] = 0
         
+    #@profile
     def ray_trace(self, pose, theta, rmax):
         ''' Test for intersection of a ray with edges in the map
         
@@ -76,38 +78,40 @@ class OGMap():
           rmax (int): maximum range of ray tracing
         '''
         assert pose.shape==(3,)
-        dists = []
-        x0, y0, phi = pose
-        p = (x0, y0)
-        s = (np.cos(theta + phi), np.sin(theta + phi))
-        for edge in self.edges:
-            r = (edge[0], edge[1])
-            q = (edge[2] - edge[0], edge[3] - edge[1])
-            den = cross(q, s)
-            pr = (p[0] - r[0], p[1] - r[1])
-            if den == 0:
-                if cross(pr, s) == 0:
-                    if np.dot(pr, s) < 0:
-                        dists.append(np.linalg.norm(pr))
-                        # print('parallel, intersecting')
-                        continue
-                    dists.append(rmax)
-                    # print('parallel, non-intersecting')
-                    continue
-            u = cross(pr, s) / den
-            if u > 1 or u < 0:
-                dists.append(rmax)
-                # print ('non-intersecting')
-                continue
-            t = cross(pr, q) / den
-            if t < 0:
-                dists.append(rmax)
-                # print('wrong side')
-                continue
-            dists.append(t)
-            # print('intersection')
-            # print t
-        return min(dists)
+        return ray_trace.ray_trace(self.edges, pose, theta, rmax)
+#        dists = []
+#        x0, y0, phi = pose
+#        s0, s1 = np.cos(theta + phi), np.sin(theta + phi)
+#        for edge in self.edges:
+#            r0, r1 = edge[0], edge[1]
+#            q0, q1 = edge[2] - r0, edge[3] - r1
+#            den = q0*s1 - q1*s0
+#            pr0, pr1 = x0 - r0, y0 - r1
+#            cross_pr_s = pr0*s1 - pr1*s0
+#            if den == 0:
+#                if cross_pr_s == 0:
+#                    if pr0*s0 + pr1+s1 < 0:
+#                        dists.append(np.linalg.norm(pr))
+#                        # print('parallel, intersecting')
+#                        continue
+#                    dists.append(rmax)
+#                    # print('parallel, non-intersecting')
+#                    continue
+#            u = cross_pr_s / den
+#            if u > 1 or u < 0:
+#                dists.append(rmax)
+#                # print ('non-intersecting')
+#                continue
+#            cross_pr_q = pr0*q1 - pr1*q0
+#            t = cross_pr_q / den
+#            if t < 0:
+#                dists.append(rmax)
+#                # print('wrong side')
+#                continue
+#            dists.append(t)
+#            # print('intersection')
+#            # print t
+#        return min(dists)
     
     def ray_plot(self, pose, theta, rmax):
         '''Plot the map with a ray cast from (x0, y0) with heading theta'''
