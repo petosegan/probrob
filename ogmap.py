@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 import ray_trace
-from sonar import Sonar
+from sonar import Sonar, Scan, BadScanError
 
 
 class OGMap():
