@@ -5,7 +5,7 @@ NTHETA = 200 # Number of angles in scan
 
 def mapdef():
 
-    test = ogmap.OGMap(100, 'pocket_trace_cache.npy')
+    test = ogmap.OGMap(100)
     test.rect(60, 30, 10, 40)
     test.rect(30, 30, 30, 5)
     test.rect(30, 65, 30, 5)

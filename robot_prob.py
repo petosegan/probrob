@@ -7,13 +7,13 @@ robot_prob - robot simulation using probabilistic localization
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 
 import numpy as np
-import ogmap
-import locate
-from mapdef import mapdef, NTHETA
-import mcl
+from math import pi
+
 import matplotlib.pyplot as plt
-from math import pi, exp, sin, cos
-from random import randint
+
+import ogmap
+from mapdef import mapdef
+import mcl
 from robot import Robot, Goal, Parameters
 
 
@@ -29,18 +29,20 @@ class ParametersProb(Parameters):
         self.control_std = control_std
 
 
+# noinspection PyAttributeOutsideInit
 class RobotProb(Robot):
     def __init__(self, parameters, sonar):
         Robot.__init__(self, parameters, sonar)
         self.control_std = self.parameters.control_std
 
+    # noinspection PyMethodOverriding
     def situate(self
-                , this_map
+                , some_map
                 , this_pose
-                , this_goal
-                , this_ens):
-        Robot.situate(self, this_map, this_pose, this_goal)
-        self.ensemble = this_ens
+                , some_goal
+                , some_ens):
+        Robot.situate(self, some_map, this_pose, some_goal)
+        self.ensemble = some_ens
 
     def command(self, control_x, control_v):
         Robot.command(self, control_x, control_v)
@@ -54,10 +56,7 @@ class RobotProb(Robot):
             self.crashed = True
         else:
             self.pose += random_move
-            try:
-                self.ensemble.pf_update(control_x, control_v)
-            except:
-                pass
+            self.ensemble.pf_update(control_x, control_v)
 
     def measure(self):
         scan = self.sonar.simulate_scan(self.pose, self.this_map)
@@ -66,7 +65,7 @@ class RobotProb(Robot):
             self.ensemble.pf_sonar(scan, self.sonar, self.this_map)
             pose_guess, _ = self.estimate_state()
             # self.ensemble.inject_random(pose_guess, scan, self.sonar,
-            #    self.this_map)
+            # self.this_map)
         except ValueError, BadScanError:
             pass
 
@@ -75,7 +74,7 @@ class RobotProb(Robot):
         idx_guess = np.argmax(self.ensemble.weight)
         pos_guess = self.ensemble.x_ens[idx_guess, :]
         vel_guess = self.ensemble.v_ens[idx_guess, :]
-        return (pos_guess, vel_guess)
+        return pos_guess, vel_guess
 
     def show_state(self):
         x0, y0, phi = self.pose
@@ -120,8 +119,8 @@ if __name__ == "__main__":
         , 'EXP_LEN': 0.1
         , 'r_rez': 2
     }
-    this_sonar = ogmap.Sonar(NUM_THETA=16
-                             , GAUSS_VAR=.1
+    this_sonar = ogmap.Sonar(num_theta=16
+                             , gauss_var=.1
                              , params=sonar_params
     )
     this_ens = mcl.Ensemble(pose=true_pose

@@ -5,21 +5,22 @@ robot - base class for robot simulator
 """
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
-import numpy as np
-import ogmap
-from mapdef import mapdef, NTHETA
+from math import pi, exp, sin, cos
+
 import matplotlib.pyplot as plt
-from math import pi, exp, sin, cos, sqrt
-import matplotlib.cm as cm
+
+import ogmap
+from mapdef import mapdef
 from utils import *
 
 
 def check_success(goal, robot):
     displacement = (goal.location - robot.pose)[0:2]
     distance_to_goal = np.linalg.norm(displacement)
-    return (distance_to_goal < 2 * goal.radius)
+    return distance_to_goal < 2 * goal.radius
 
 
+# noinspection PyAttributeOutsideInit
 class Robot():
     def __init__(self, parameters, sonar):
 
@@ -36,14 +37,14 @@ class Robot():
         self.displacement_slowdown = self.parameters.displacement_slowdown
         self.avoid_threshold = self.parameters.avoid_threshold
 
-    def situate(self, this_map, pose, goal):
+    def situate(self, some_map, pose, goal):
         """
 
-        :param this_map:
+        :param some_map:
         :param pose:
         :param goal:
         """
-        self.this_map = this_map
+        self.this_map = some_map
         self.pose = np.array(pose)
         self.goal = goal
 
@@ -52,12 +53,12 @@ class Robot():
         self.goal_attained = False
         self.crashed = False
 
-    def automate(self, numsteps=100):
+    def automate(self, num_steps=100):
         """
 
-        :param numsteps:
+        :param num_steps:
         """
-        for step in range(numsteps):
+        for step in range(num_steps):
             if self.goal_attained:
                 print 'GOAL REACHED'
                 break
@@ -126,7 +127,7 @@ class Robot():
         )
 
     def control_policy(self):
-        '''return appropriate control vectors'''
+        """return appropriate control vectors"""
         pos_guess, _ = self.estimate_state()
         displacement = (self.goal.location - pos_guess)[0:2]
         distance_to_goal = np.linalg.norm(displacement)
@@ -140,11 +141,11 @@ class Robot():
             vel_des_rect = displacement / distance_to_goal
             vel_des_rect *= (1 - exp(-distance_to_goal / self.displacement_slowdown))
 
-        return (np.array((0, 0, 0)), self.vcontroller(vel_des_rect))
+        return np.array((0, 0, 0)), self.vcontroller(vel_des_rect)
 
     def estimate_state(self):
         """return best guess of robot state"""
-        return (self.pose, self.vel)
+        return self.pose, self.vel
 
     def flee_vector(self):
         """return unit vector for avoiding obstacles"""
@@ -154,7 +155,7 @@ class Robot():
         xs = [-cos(ping[0] + phi) / (ping[1] + eps) ** 2 for ping in pings]
         ys = [-sin(ping[0] + phi) / (ping[1] + eps) ** 2 for ping in pings]
         avoid_vec = np.array((np.sum(xs), np.sum(ys)))
-        return (avoid_vec / np.linalg.norm(avoid_vec))
+        return avoid_vec / np.linalg.norm(avoid_vec)
 
     def vcontroller(self, vel_des_rect):
         """
@@ -182,13 +183,9 @@ class Robot():
         :param control_x:
         :param control_v:
         """
-        vx, vy, omega = self.vel
-        vr = np.linalg.norm((vx, vy))
-        forward_obstacle_distance = self.this_map.ray_trace(self.pose, 0, self.vel_max)
-        vr = min(vr, forward_obstacle_distance)
         self.dx = self.vel
         self.pose = self.pose + self.dx + control_x
-        self.pose[2] = self.pose[2] % (2 * pi)
+        self.pose[2] %= 2 * pi
         self.vel = self.vel + control_v
 
 
@@ -247,8 +244,8 @@ if __name__ == "__main__":
     this_goal = Goal(location=(50, 50, 0)
                      , radius=3)
     this_map = mapdef()
-    this_sonar = ogmap.Sonar(NUM_THETA=10
-                             , GAUSS_VAR=.01
+    this_sonar = ogmap.Sonar(num_theta=10
+                             , gauss_var=.01
     )
 
     this_robot = Robot(these_parameters

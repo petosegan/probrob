@@ -18,7 +18,7 @@ import hybrid_automaton as ha
 
 MAX_GOAL_DISTANCE = 1000  # I assume goal distance is never larger than this
 
-## Policies
+# Policies
 
 def gtg_policy(slowdown_radius, vel_max, vel_guess, goal_vector, **kwargs):
     """control policy for go to goal behavior
@@ -62,7 +62,7 @@ def goal_policy(vel_guess, **kwargs):
     return np.array((0, 0))
 
 
-## Guard Conditions
+# Guard Conditions
 
 def condition_fw_gtg(goal_vector, flee_vector, last_goal_distance, **kwargs):
     """condition for transition from follow wall to go-to-goal
@@ -71,7 +71,7 @@ def condition_fw_gtg(goal_vector, flee_vector, last_goal_distance, **kwargs):
 
     distance = np.linalg.norm(goal_vector)
     direction = np.dot(goal_vector, flee_vector)
-    return (distance < last_goal_distance and direction > 0)
+    return distance < last_goal_distance and direction > 0
 
 
 def condition_fw_ao(obst_distance, flee_threshold, guard_fatness, **kwargs):
@@ -79,7 +79,7 @@ def condition_fw_ao(obst_distance, flee_threshold, guard_fatness, **kwargs):
     Stop wall following and avoid the obstacle when the distance to the
     obstacle is below the threshold"""
 
-    return (obst_distance < (flee_threshold - 0.5 * guard_fatness))
+    return obst_distance < (flee_threshold - 0.5 * guard_fatness)
 
 
 def condition_gtg_fw_cc(obst_distance, goal_vector, flee_vector, flee_threshold,
@@ -139,10 +139,10 @@ def condition_gtg_goal(goal_vector, goal_radius, **kwargs):
     Stop seeking the goal when within the goal radius"""
 
     distance = np.linalg.norm(goal_vector)
-    return (distance < goal_radius)
+    return distance < goal_radius
 
 
-## Resets
+# Resets
 
 def record_goal_distance(state, goal_vector, **kwargs):
     """record the goal distance upon entering a follow wall behavior"""
@@ -156,7 +156,7 @@ def no_reset(state, **kwargs):
     return state
 
 
-## Behaviors
+# Behaviors
 
 behavior_gtg = ha.Behavior('Go-to-goal', gtg_policy)
 behavior_ao = ha.Behavior('Avoid-obstacle', ao_policy)
@@ -165,7 +165,7 @@ behavior_fw_c = ha.Behavior('Follow-wall-cw', fw_c_policy)
 behavior_goal = ha.Behavior('Goal-reached', goal_policy)
 
 
-## Guards
+# Guards
 # Defines the network structure of the navigator
 
 guard_gtg_fw_cc = ha.Guard(condition_gtg_fw_cc, behavior_fw_cc,
@@ -187,9 +187,7 @@ guard_ao_fw_cc = ha.Guard(condition_ao_fw_cc, behavior_fw_cc,
 guard_ao_fw_c = ha.Guard(condition_ao_fw_c, behavior_fw_c, record_goal_distance)
 behavior_ao.guards = [guard_ao_fw_cc, guard_ao_fw_c]
 
-## Navigator
-# navigator = ha.HybridAutomaton([behavior_gtg, behavior_ao, behavior_fw_cc,
-#    behavior_fw_c], behavior_gtg, {'last_goal_distance':MAX_GOAL_DISTANCE})
+# Navigator
 
 class Navigator(ha.HybridAutomaton):
     def __init__(self):

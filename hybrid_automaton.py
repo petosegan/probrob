@@ -1,13 +1,15 @@
-'''Hybrid Automaton
+"""Hybrid Automaton
 
 This module implements a hybrid automaton architecture for control of a mobile
 robot. The automaton is a finite state machine where each node is associated
 with a control policy. Edges, corresponding to transitions between policies,
 are activated when their GUARD condition becomes true, and alter the state via
-their RESET action.'''
+their RESET action."""
+
 
 class HybridAutomaton():
-    '''Represents a hybrid automaton'''
+    """Represents a hybrid automaton"""
+
     def __init__(self, behaviors, initial_behavior, state):
         """create a hybrid automaton instance
         
@@ -37,9 +39,11 @@ class HybridAutomaton():
         control_policy = self.current_behavior.policy
         return control_policy
 
+
 class Behavior():
-    ''''Represents a node in a hybrid automaton'''
-    def __init__(self, name, policy, guards = []):
+    """'Represents a node in a hybrid automaton"""
+
+    def __init__(self, name, policy, guards=[]):
         """create a node instance
         
         Args:
@@ -53,6 +57,7 @@ class Behavior():
 
     def add_guards(self, guard_list):
         self.guards.extend(guard_list)
+
 
 class Guard():
     def __init__(self, condition, new_behavior, reset):
