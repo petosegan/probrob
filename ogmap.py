@@ -8,13 +8,12 @@ This module implements a binary occupancy grid representation of a map of the
 environment, and related operations useful for localization and mapping.
 '''
 
-import os
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from math import floor, pi
 import ray_trace
-from sonar import Sonar
+from sonar import Sonar, Scan, BadScanError
 
 class OGMap():
     '''Representation of a square binary occupancy grid map'''

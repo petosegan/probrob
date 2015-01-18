@@ -175,9 +175,13 @@ guard_ao_fw_c   = ha.Guard(condition_ao_fw_c, behavior_fw_c, record_goal_distanc
 behavior_ao.guards=[guard_ao_fw_cc, guard_ao_fw_c]
 
 ## Navigator
-navigator = ha.HybridAutomaton([behavior_gtg, behavior_ao, behavior_fw_cc,
-    behavior_fw_c], behavior_gtg, {'last_goal_distance':MAX_GOAL_DISTANCE})
+#navigator = ha.HybridAutomaton([behavior_gtg, behavior_ao, behavior_fw_cc,
+#    behavior_fw_c], behavior_gtg, {'last_goal_distance':MAX_GOAL_DISTANCE})
 
+class Navigator(ha.HybridAutomaton):
+    def __init__(self):
+        ha.HybridAutomaton.__init__(self, [behavior_gtg, behavior_ao, behavior_fw_cc,
+    behavior_fw_c], behavior_gtg, {'last_goal_distance':MAX_GOAL_DISTANCE})
 
 if __name__ == "__main__":
     # A carelessly chosen set of test parameters

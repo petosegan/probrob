@@ -11,15 +11,15 @@ import matplotlib.pyplot as plt
 import ogmap
 from mapdef import mapdef, NTHETA
 from math import pi, exp, sin, cos
-from navigator import navigator
+from navigator import Navigator
 from robot import Robot, Goal, Parameters
 
 
-class Robot_HA(Robot):
+class RobotHA(Robot):
     def __init__(self, parameters, sonar):
         Robot.__init__(self, parameters, sonar) 
 
-        self.navigator = navigator
+        self.navigator = Navigator()
         self.guard_fatness = 5
 
         self.fixed_params = {'omega_max': self.parameters.omega_max
@@ -51,11 +51,11 @@ class Robot_HA(Robot):
         robot_state.update(estimated_state)
         robot_state.update(self.navigator.state)
 
-    #    print self.navigator.current_behavior.name
+        policy = self.navigator.update(robot_state)
+        #print self.navigator.current_behavior.name
         if self.navigator.current_behavior.name == "Goal-reached":
             self.goal_attained = True
 	
-        policy = self.navigator.update(robot_state)
         control_v = self.vcontroller(policy(**robot_state))
 
         return (control_x, control_v)
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     this_sonar = ogmap.Sonar(NUM_THETA = 16
             , GAUSS_VAR = 0.01
             )
-    this_robot = Robot_HA(parameters, this_sonar)
+    this_robot = RobotHA(parameters, this_sonar)
     this_robot.situate(this_map
             , true_pose
             , this_goal

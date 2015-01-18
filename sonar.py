@@ -1,4 +1,5 @@
 import numpy as np        
+import matplotlib.pyplot as plt
 from math import pi
 
 class BadScanError(Exception):
@@ -29,10 +30,8 @@ class Sonar():
         self.thetas = np.linspace(0, 2*pi, self.NUM_THETA) #headings
         self.rs = np.arange(0, self.params['RMAX'], self.params['r_rez'])
         
-        self.p_exp = np.exp(-self.rs / self.params['EXP_LEN'])
-        self.p_exp /= np.sum(self.p_exp)
-        self.p_uni = np.ones(len(self.rs))
-        self.p_uni /= np.sum(self.p_uni)
+        self.p_exp = np.exp(-self.rs / self.params['EXP_LEN']) / self.params['EXP_LEN']
+        self.p_uni = np.ones(len(self.rs)) / len(self.rs)
         self.p_max = np.zeros(len(self.rs))
         self.p_max[-1] = 1
         self.p_min = np.zeros(len(self.rs))

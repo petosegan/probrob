@@ -20,7 +20,7 @@ class ParametersProb(Parameters):
     def __init__(self
             , vel_max=3
             , omega_max=0.1
-            , displacement_slowdown=25
+            , displacement_slowdown=10
             , avoid_threshold=5
             , control_std=0.01
             ):
