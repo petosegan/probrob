@@ -17,6 +17,7 @@ import numpy as np
 import random
 
 
+# noinspection PyMethodOverriding
 class RobotProbHA(robot_prob.RobotProb, robot_ha.RobotHA):
     def __init__(self, this_parameters, sonar):
         robot_prob.RobotProb.__init__(self, this_parameters, sonar)
@@ -34,6 +35,9 @@ class RobotProbHA(robot_prob.RobotProb, robot_ha.RobotHA):
         return robot_ha.RobotHA.control_policy(self)
 
     def show_state(self):
+        """
+        Override show_state to disable visualization
+        """
         pass
 
 
