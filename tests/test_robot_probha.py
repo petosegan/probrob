@@ -18,6 +18,7 @@ from math import pi
 
 class TestRobot():
     def test_success(self):
+        print '\n'
         NRUNS = 5
         successes = 0
         for ii in range(NRUNS):
