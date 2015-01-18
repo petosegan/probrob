@@ -110,8 +110,8 @@ class Sonar():
         x0, y0, phi = pose
         true_r = this_map.ray_trace(pose, th, self.params['RMAX'])
         if true_r < self.params['RMAX']:
-            p_gauss = np.exp(-0.5*(self.rs - true_r)**2 / self.GAUSS_VAR)
-            p_gauss /= np.sum(p_gauss)
+            p_gauss = np.exp(-0.5*(self.rs - true_r)**2 / self.GAUSS_VAR) / np.sqrt(2*pi*self.GAUSS_VAR)
+            #p_gauss /= np.sum(p_gauss)
             w_gauss = self.weights['w_gauss']
             w_max = self.weights['w_max_hit']
         else:
