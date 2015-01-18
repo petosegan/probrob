@@ -9,11 +9,13 @@ environment, and related operations useful for localization and mapping.
 '''
 
 import numpy as np
+
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-from math import floor, pi
+
 import ray_trace
-from sonar import Sonar, Scan, BadScanError
+from sonar import Sonar
+
 
 class OGMap():
     '''Representation of a square binary occupancy grid map'''
@@ -101,7 +103,8 @@ class Rect():
 
 
 if __name__ == "__main__":
-    from mapdef import mapdef, NTHETA
+    from mapdef import mapdef
+
     this_map = mapdef()
     this_sonar = Sonar(NUM_THETA = 200, GAUSS_VAR = 1)
     pose = (50,50,0)

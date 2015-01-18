@@ -13,14 +13,21 @@ from math import pi, exp, sin, cos, sqrt
 import matplotlib.cm as cm
 from utils import *
 
+
 def check_success(goal, robot):
-    displacement = (goal.location-robot.pose)[0:2]
+    displacement = (goal.location - robot.pose)[0:2]
     distance_to_goal = np.linalg.norm(displacement)
-    return (distance_to_goal < 2*goal.radius)
+    return (distance_to_goal < 2 * goal.radius)
+
 
 class Robot():
     def __init__(self, parameters, sonar):
 
+        """
+
+        :param parameters:
+        :param sonar:
+        """
         self.parameters = parameters
         self.sonar = sonar
 
@@ -30,16 +37,26 @@ class Robot():
         self.avoid_threshold = self.parameters.avoid_threshold
 
     def situate(self, this_map, pose, goal):
+        """
+
+        :param this_map:
+        :param pose:
+        :param goal:
+        """
         self.this_map = this_map
         self.pose = np.array(pose)
         self.goal = goal
 
-        self.vel = np.array((0,0,0))
+        self.vel = np.array((0, 0, 0))
 
         self.goal_attained = False
         self.crashed = False
 
     def automate(self, numsteps=100):
+        """
+
+        :param numsteps:
+        """
         for step in range(numsteps):
             if self.goal_attained:
                 print 'GOAL REACHED'
@@ -53,6 +70,10 @@ class Robot():
             self.command(control_x, control_v)
 
     def measure(self):
+        """
+
+
+        """
         scan = self.sonar.simulate_scan(self.pose, self.this_map)
         try:
             self.last_scan = self.sonar.maxmin_filter(scan)
@@ -60,46 +81,58 @@ class Robot():
             pass
 
     def show_state(self):
+        """
+
+
+        """
         plt.cla()
         self.this_map.show()
         self.goal.show()
         self.show_pose()
         self.show_flee_vector()
         self.last_scan.show()
-        plt.xlim(0, 100) 
+        plt.xlim(0, 100)
         plt.ylim(0, 100)
         plt.draw()
 
     def show_pose(self):
+        """
+
+
+        """
         x0, y0, phi = self.pose
         plt.plot(x0
-                , y0
-                , 'o', color='g'
-                , markersize=10
-                )
+                 , y0
+                 , 'o', color='g'
+                 , markersize=10
+        )
         plt.quiver(x0
-                , y0
-                , np.cos(phi)
-                , np.sin(phi)
-                )
+                   , y0
+                   , np.cos(phi)
+                   , np.sin(phi)
+        )
 
     def show_flee_vector(self):
+        """
+
+
+        """
         x0, y0, _ = self.pose
         plt.quiver(x0
-                , y0
-                , self.flee_vector()[0]
-                , self.flee_vector()[1]
-                , color='r'
-                )
+                   , y0
+                   , self.flee_vector()[0]
+                   , self.flee_vector()[1]
+                   , color='r'
+        )
 
     def control_policy(self):
         '''return appropriate control vectors'''
-        pos_guess, _  = self.estimate_state()
-        displacement = (self.goal.location-pos_guess)[0:2]
+        pos_guess, _ = self.estimate_state()
+        displacement = (self.goal.location - pos_guess)[0:2]
         distance_to_goal = np.linalg.norm(displacement)
 
         if distance_to_goal <= self.goal.radius:
-            vel_des_rect = np.array((0,0))
+            vel_des_rect = np.array((0, 0))
             self.goal_attained = True
         elif self.last_scan.obst_distance < self.avoid_threshold:
             vel_des_rect = self.flee_vector()
@@ -107,49 +140,76 @@ class Robot():
             vel_des_rect = displacement / distance_to_goal
             vel_des_rect *= (1 - exp(-distance_to_goal / self.displacement_slowdown))
 
-        return (np.array((0,0,0)), self.vcontroller(vel_des_rect))
-        
+        return (np.array((0, 0, 0)), self.vcontroller(vel_des_rect))
+
     def estimate_state(self):
         """return best guess of robot state"""
         return (self.pose, self.vel)
- 
+
     def flee_vector(self):
         """return unit vector for avoiding obstacles"""
         eps = 0.25
         x0, y0, phi = self.pose
         pings = self.last_scan.pings
-        xs = [-cos(ping[0]+phi) / (ping[1]+eps)**2 for ping in pings]
-        ys = [-sin(ping[0]+phi) / (ping[1]+eps)**2 for ping in pings]
+        xs = [-cos(ping[0] + phi) / (ping[1] + eps) ** 2 for ping in pings]
+        ys = [-sin(ping[0] + phi) / (ping[1] + eps) ** 2 for ping in pings]
         avoid_vec = np.array((np.sum(xs), np.sum(ys)))
         return (avoid_vec / np.linalg.norm(avoid_vec))
 
     def vcontroller(self, vel_des_rect):
+        """
+
+
+        :type vel_des_rect: 2-vector
+        :param vel_des_rect:
+        :return:
+        """
         vel_des_phi = self.omega_des(vel_des_rect)
         vel_des = np.append(vel_des_rect, vel_des_phi)
         _, vel_guess = self.estimate_state()
         return vel_des - vel_guess
 
     def omega_des(self, vel_des_rect):
-        return self.omega_max * (rect2phi(vel_des_rect) % (2*pi) - self.estimate_state()[0][2] % (2*pi))
+        """
+
+        :rtype : float
+        """
+        return self.omega_max * (rect2phi(vel_des_rect) % (2 * pi) - self.estimate_state()[0][2] % (2 * pi))
 
     def command(self, control_x, control_v):
+        """
+
+        :param control_x:
+        :param control_v:
+        """
         vx, vy, omega = self.vel
         vr = np.linalg.norm((vx, vy))
         forward_obstacle_distance = self.this_map.ray_trace(self.pose, 0, self.vel_max)
         vr = min(vr, forward_obstacle_distance)
         self.dx = self.vel
         self.pose = self.pose + self.dx + control_x
-        self.pose[2] = self.pose[2]%(2*pi)
+        self.pose[2] = self.pose[2] % (2 * pi)
         self.vel = self.vel + control_v
 
 
 class Parameters():
     def __init__(self
-	       , vel_max=1
-	       , omega_max=0.1
-	       , displacement_slowdown=25
-	       , avoid_threshold=5
-	       ):
+                 , vel_max=1
+                 , omega_max=0.1
+                 , displacement_slowdown=25
+                 , avoid_threshold=5
+    ):
+        """
+
+
+
+        :type omega_max: float
+        :type vel_max: float
+        :param vel_max:
+        :param omega_max:
+        :param displacement_slowdown:
+        :param avoid_threshold:
+        """
         self.vel_max = vel_max
         self.omega_max = omega_max
         self.displacement_slowdown = displacement_slowdown
@@ -163,11 +223,11 @@ class Goal():
 
     def show(self):
         plt.plot(self.location[0]
-                , self.location[1]
-                , '*'
-                , color='red'
-                , markersize=20
-                )
+                 , self.location[1]
+                 , '*'
+                 , color='red'
+                 , markersize=20
+        )
 
 
 if __name__ == "__main__":
@@ -179,29 +239,29 @@ if __name__ == "__main__":
         Red star\t -\t Goal"""
 
     these_parameters = Parameters(vel_max=1
-            , omega_max=0.1
-            , displacement_slowdown=25
-            , avoid_threshold=5
-            )
+                                  , omega_max=0.1
+                                  , displacement_slowdown=25
+                                  , avoid_threshold=5
+    )
     true_pose = (20, 90, pi)
-    this_goal = Goal(location=(50,50,0)
-            , radius=3)
+    this_goal = Goal(location=(50, 50, 0)
+                     , radius=3)
     this_map = mapdef()
-    this_sonar = ogmap.Sonar(NUM_THETA = 10
-            , GAUSS_VAR = .01
-            )
+    this_sonar = ogmap.Sonar(NUM_THETA=10
+                             , GAUSS_VAR=.01
+    )
 
     this_robot = Robot(these_parameters
-            , this_sonar
-            )
+                       , this_sonar
+    )
     this_robot.situate(this_map
-            , true_pose
-            , this_goal
-            )
+                       , true_pose
+                       , this_goal
+    )
 
     plt.ion()
     this_robot.automate()
     if check_success(this_goal, this_robot):
-	print "SUCCESS"
+        print "SUCCESS"
     else:
-	print "FAILURE"
+        print "FAILURE"

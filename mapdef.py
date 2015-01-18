@@ -1,6 +1,7 @@
-import ogmap
-import os
 from random import randrange
+
+import ogmap
+
 
 NTHETA = 200 # Number of angles in scan
 

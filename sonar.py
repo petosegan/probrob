@@ -146,5 +146,3 @@ class Scan():
                 , markersize=markersize
                 , **kwargs
                 )
-
-

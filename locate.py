@@ -7,12 +7,13 @@ This module provides functions for calculating the likelihood of sonar scan
 data in a given map with a given pose.
 '''
 
-import os
-import ogmap
 import numpy as np
+
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-from math import pi
+
+import ogmap
+
 
 def find_nearest(array,value):
     '''Return the entry in array that is closest to value'''
