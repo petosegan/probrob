@@ -19,14 +19,17 @@ def find_nearest(array,value):
     idx = (np.abs(array-value)).argmin()
     return array[idx]
 
-def ping_likelihood(pose, ping, this_map, this_sonar):
-    ''' Calculate the probability of a sonar measurement (ping) at a location,
-        given a pose and map'''
-    (theta, range) = ping
-    range_pdf = this_sonar.ping_pdf(pose, theta, this_map)
-    nearest_range_idx = (np.abs(this_sonar.rs - range)).argmin()
-    return range_pdf[nearest_range_idx]
+#def ping_likelihood(pose, ping, this_map, this_sonar):
+#    ''' Calculate the probability of a sonar measurement (ping) at a location,
+#        given a pose and map'''
+#    (theta, distance) = ping
+#    distance_pdf = this_sonar.ping_pdf(pose, theta, this_map)
+#    nearest_range_idx = (np.abs(this_sonar.rs - distance)).argmin()
+#    return distance_pdf[nearest_range_idx]
     
+def ping_likelihood(pose, ping, this_map, this_sonar):
+    return this_sonar.ping_likelihood(pose, ping, this_map)
+
 def scan_loglikelihood(pose, scan, this_map, this_sonar):
     '''Return the log-likelihood of a full sonar scan at a location, given a pose and map'''
     L = 0

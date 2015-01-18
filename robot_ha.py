@@ -51,7 +51,7 @@ class Robot_HA(Robot):
         robot_state.update(estimated_state)
         robot_state.update(self.navigator.state)
 
-        print self.navigator.current_behavior.name
+    #    print self.navigator.current_behavior.name
         if self.navigator.current_behavior.name == "Goal-reached":
             self.goal_attained = True
 	

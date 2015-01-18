@@ -20,9 +20,9 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 class BadScanError(Exception):
     pass
 
-def cross(a, b):
-    '''return two-dimensional cross product'''
-    return a[0]*b[1] - a[1]*b[0]
+#def cross(a, b):
+#    '''return two-dimensional cross product'''
+#    return a[0]*b[1] - a[1]*b[0]
 
 class OGMap():
     '''Representation of a square binary occupancy grid map'''
@@ -209,6 +209,25 @@ class Sonar():
         p_tot = self.ping_pdf(pose, th, this_map)
         r_meas = np.random.choice(self.rs, p=p_tot)
         return r_meas
+
+    def ping_likelihood(self, pose, ping, this_map):
+        theta, distance = ping
+        x0, y0, phi = pose
+        exp_term = np.exp(-distance / self.params['EXP_LEN']) / self.params['EXP_LEN']
+        uni_term = 1.0 / len(self.rs)
+        min_term = 1 if distance <= self.rs[1] else 0
+        max_term = 1 if distance >= self.rs[-1] else 0
+        true_r = this_map.ray_trace(pose, theta, self.params['RMAX'])
+        gauss_term = (2*pi*self.GAUSS_VAR)**0.5*np.exp(-0.5*(distance-true_r)**2 / self.GAUSS_VAR)
+
+        total_weight = self.weights['w_exp'] + self.weights['w_uni'] + self.weights['w_min'] + self.weights['w_max_hit'] + self.weights['w_gauss']
+
+        return ((self.weights['w_exp']*exp_term
+            +   self.weights['w_uni']*uni_term
+            +   self.weights['w_min']*min_term
+            +   self.weights['w_max_hit']*max_term
+            +   self.weights['w_gauss']*gauss_term)/total_weight)
+
 
     #@profile    
     def ping_pdf(self, pose, th, this_map):

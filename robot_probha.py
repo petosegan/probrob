@@ -1,11 +1,13 @@
 from robot_prob import RobotProb, ParametersProb, Goal
 from robot_ha import Robot_HA
+from robot import check_success
 import matplotlib.pyplot as plt
 from math import pi
 from mapdef import mapdef, NTHETA
 import ogmap
 import mcl
 import numpy as np
+import random
 
 class RobotProbHa(RobotProb, Robot_HA):
     def __init__(self, parameters, sonar):
@@ -23,17 +25,12 @@ class RobotProbHa(RobotProb, Robot_HA):
     def control_policy(self):
         return Robot_HA.control_policy(self)	
 
+    def show_state(self):
+        pass
 
-if __name__ == "__main__":
-    print """Legend:
-        Yellow star \t -\t True Position of Robot
-	Blue arrows \t -\t Particle Cloud
-	Yellow dots \t -\t Sonar pings
-	Green boxes \t -\t Obstacles
-	Red star \t -\t Goal"""
-
+def main():
     parameters = ParametersProb()
-    this_goal = Goal(location=(50, 50, pi)
+    this_goal = Goal(location=(random.randrange(20, 80), random.randrange(10, 60), pi)
 		    , radius = 3)
     true_pose = (50, 90, -90)
     this_map = mapdef()
@@ -52,9 +49,17 @@ if __name__ == "__main__":
     this_robot = RobotProbHa(parameters, this_sonar)
     this_robot.situate(this_map, true_pose, this_goal, this_ens)
 
-    plt.ion()
-    fig = plt.figure()
-    fig.set_size_inches(20,20)
-    plt.get_current_fig_manager().resize(1000, 1000)
+    #plt.ion()
+    #fig = plt.figure()
+    #fig.set_size_inches(20,20)
+    #plt.get_current_fig_manager().resize(1000, 1000)
 
+    print "Robot Running"
     this_robot.automate(numsteps=300)
+    if check_success(this_goal, this_robot):
+        print "SUCCESS"
+    else:
+        print "FAILURE"
+
+if __name__ == "__main__":
+    main()

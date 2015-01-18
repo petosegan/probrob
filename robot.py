@@ -13,6 +13,10 @@ from math import pi, exp, sin, cos, sqrt
 import matplotlib.cm as cm
 from utils import *
 
+def check_success(goal, robot):
+    displacement = (goal.location-robot.pose)[0:2]
+    distance_to_goal = np.linalg.norm(displacement)
+    return (distance_to_goal < 2*goal.radius)
 
 class Robot():
     def __init__(self, parameters, sonar):
@@ -197,3 +201,7 @@ if __name__ == "__main__":
 
     plt.ion()
     this_robot.automate()
+    if check_success(this_goal, this_robot):
+	print "SUCCESS"
+    else:
+	print "FAILURE"
