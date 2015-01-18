@@ -13,6 +13,7 @@ numsteps = 500
 N_PART = 100
 win_size = 100
 
+
 class Ensemble():
     ''' Container for particles used in monte carlo localization '''
 
@@ -82,13 +83,9 @@ class Ensemble():
             , using sonar data '''
         num_part = self.x_ens.shape[0]
         weight = np.zeros(num_part)
-        for i in range(num_part):
-            weight[i] = 1.0 / abs(locate.scan_loglikelihood(
-		    self.x_ens[i,:]
-                                , scan
-                                , this_map
-                                , this_sonar
-                                ))**2
+	get_ll = lambda i: locate.scan_loglikelihood(self.x_ens[i, :], scan, this_map, this_sonar)
+	lls = np.array(map(get_ll, xrange(num_part)))
+        weight = 1.0 / np.abs(lls)**2
         bad_weights = np.isnan(weight)
         weight[bad_weights] = 0
         weight = weight / np.sum(weight) # normalize
