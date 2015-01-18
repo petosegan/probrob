@@ -38,7 +38,7 @@ class OGMap():
                     , cmap = cm.Greys_r
                     , origin='lower'
                     )
-        
+
     def rect(self, x0, y0, width, height):
         '''Place a rectangle with lower left corner at (x0, y0) 
         and dimensions (width x height)'''
@@ -48,7 +48,7 @@ class OGMap():
         self.edges.append((x0+width, y0, x0+width, y0+height))
         self.edges.append((x0, y0+height, x0+width, y0+height))
         self.grid[y0:y0+height, x0:x0+width] = 0
-        
+
     def ray_trace(self, pose, theta, rmax):
         ''' Test for intersection of a ray with edges in the map
         
@@ -60,7 +60,7 @@ class OGMap():
         assert pose.shape==(3,)
         #moved implementation to ray_trace.pyx for cython
         return ray_trace.ray_trace(self.edges, pose, theta, rmax)
-    
+
     def ray_plot(self, pose, theta, rmax):
         '''Plot the map with a ray cast from (x0, y0) with heading theta'''
         x0, y0,phi = pose
@@ -78,7 +78,7 @@ class OGMap():
         plt.xlim((0,self.N))
         plt.ylim((0,self.N))
         plt.draw()
-        
+
     def collision(self, x, y):
         '''Check if point (x, y) lies in an obstacle'''
         for rect in self.rects:

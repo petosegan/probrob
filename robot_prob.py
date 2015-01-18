@@ -48,6 +48,8 @@ class RobotProb(Robot):
         random_dist = np.linalg.norm(random_move[0:2])
         if forward_obstacle_distance < random_dist:
             self.crashed = True
+	elif self.this_map.collision(*self.pose[0:2]):
+	    self.crashed = True
         else:
             self.pose += random_move 
             try:

@@ -25,14 +25,14 @@ class RobotProbHA(RobotProb, RobotHA):
     def control_policy(self):
         return RobotHA.control_policy(self)	
 
-#    def show_state(self):
-#        pass
+    def show_state(self):
+        pass
 
 def main():
     parameters = ParametersProb()
     this_goal = Goal(location=(random.randrange(20, 80), random.randrange(10, 60), pi)
 		    , radius = 3)
-    true_pose = (random.randrange(10, 90), 90, 0.1)
+    true_pose = (random.randrange(10, 50), 90, 0.1)
     this_map = mapdef()
     sonar_params = {'RMAX':100
 		    , 'EXP_LEN':0.1
@@ -49,14 +49,14 @@ def main():
     this_robot = RobotProbHA(parameters, this_sonar)
     this_robot.situate(this_map, true_pose, this_goal, this_ens)
 
-    plt.ion()
-    fig = plt.figure()
-    fig.set_size_inches(20,20)
-    plt.get_current_fig_manager().resize(1000, 1000)
+    #plt.ion()
+    #fig = plt.figure()
+    #fig.set_size_inches(20,20)
+    #plt.get_current_fig_manager().resize(1000, 1000)
 
 #    print "Robot Running"
     this_robot.automate(numsteps=100)
-    plt.close()
+    #plt.close()
     if check_success(this_goal, this_robot):
         print "SUCCESS"
         return True
