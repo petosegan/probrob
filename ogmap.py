@@ -68,7 +68,6 @@ class OGMap():
         self.edges.append((x0, y0+height, x0+width, y0+height))
         self.grid[y0:y0+height, x0:x0+width] = 0
         
-    #@profile
     def ray_trace(self, pose, theta, rmax):
         ''' Test for intersection of a ray with edges in the map
         
@@ -78,40 +77,8 @@ class OGMap():
           rmax (int): maximum range of ray tracing
         '''
         assert pose.shape==(3,)
+        #moved implementation to ray_trace.pyx for cython
         return ray_trace.ray_trace(self.edges, pose, theta, rmax)
-#        dists = []
-#        x0, y0, phi = pose
-#        s0, s1 = np.cos(theta + phi), np.sin(theta + phi)
-#        for edge in self.edges:
-#            r0, r1 = edge[0], edge[1]
-#            q0, q1 = edge[2] - r0, edge[3] - r1
-#            den = q0*s1 - q1*s0
-#            pr0, pr1 = x0 - r0, y0 - r1
-#            cross_pr_s = pr0*s1 - pr1*s0
-#            if den == 0:
-#                if cross_pr_s == 0:
-#                    if pr0*s0 + pr1+s1 < 0:
-#                        dists.append(np.linalg.norm(pr))
-#                        # print('parallel, intersecting')
-#                        continue
-#                    dists.append(rmax)
-#                    # print('parallel, non-intersecting')
-#                    continue
-#            u = cross_pr_s / den
-#            if u > 1 or u < 0:
-#                dists.append(rmax)
-#                # print ('non-intersecting')
-#                continue
-#            cross_pr_q = pr0*q1 - pr1*q0
-#            t = cross_pr_q / den
-#            if t < 0:
-#                dists.append(rmax)
-#                # print('wrong side')
-#                continue
-#            dists.append(t)
-#            # print('intersection')
-#            # print t
-#        return min(dists)
     
     def ray_plot(self, pose, theta, rmax):
         '''Plot the map with a ray cast from (x0, y0) with heading theta'''
@@ -242,7 +209,8 @@ class Sonar():
         p_tot = self.ping_pdf(pose, th, this_map)
         r_meas = np.random.choice(self.rs, p=p_tot)
         return r_meas
-        
+
+    #@profile    
     def ping_pdf(self, pose, th, this_map):
         '''Return a sonar probability density of a specified ray'''
 

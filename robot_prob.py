@@ -61,8 +61,8 @@ class RobotProb(Robot):
             self.last_scan = self.sonar.maxmin_filter(scan)
             self.ensemble.pf_sonar(scan, self.sonar, self.this_map)
             pose_guess, _ = self.estimate_state()
-            self.ensemble.inject_random(pose_guess, scan, self.sonar,
-                self.this_map)
+            #self.ensemble.inject_random(pose_guess, scan, self.sonar,
+            #    self.this_map)
         except ValueError, BadScanError:
             pass
         
@@ -109,12 +109,19 @@ if __name__ == "__main__":
     parameters = ParametersProb()
     this_goal = Goal(location=(50,50,pi)
             , radius=3)
-    true_pose = (20,20,-90) # fails without obstacle avoidance
+    true_pose = (50,90,-90) 
     this_map = mapdef()
-    this_sonar = ogmap.Sonar(NUM_THETA = 16, GAUSS_VAR = .0001)
+    sonar_params = {'RMAX':100
+                   , 'EXP_LEN':0.1
+                   , 'r_rez':2
+                   }
+    this_sonar = ogmap.Sonar(NUM_THETA = 16
+                           , GAUSS_VAR = .1
+                           , params=sonar_params
+                           )
     this_ens = mcl.Ensemble(pose = true_pose
-		    , N=10
-                    , acc_var = np.array((.001, .001, .001))
+		    , N=50
+                    , acc_var = np.array((.0001, .0001, .0001))
 		    , meas_var = np.array((.01, .01, .01)))
     this_robot = RobotProb(parameters, this_sonar)
     this_robot.situate(this_map, true_pose, this_goal, this_ens)
@@ -124,4 +131,4 @@ if __name__ == "__main__":
     fig.set_size_inches(20, 20)
     plt.get_current_fig_manager().resize(1000,1000)
 
-    this_robot.automate(numsteps=1)
+    this_robot.automate(numsteps=100)

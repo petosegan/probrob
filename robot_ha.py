@@ -54,7 +54,7 @@ class Robot_HA(Robot):
         print self.navigator.current_behavior.name
         if self.navigator.current_behavior.name == "Goal-reached":
             self.goal_attained = True
-
+	
         policy = self.navigator.update(robot_state)
         control_v = self.vcontroller(policy(**robot_state))
 

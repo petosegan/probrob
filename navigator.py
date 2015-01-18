@@ -38,7 +38,7 @@ def fw_cc_policy(vel_guess, flee_vector, vel_max, **kwargs):
     Move normal to obstacle in ccw sense"""
 
     flee_x, flee_y = flee_vector
-    fw_cc_vector = (-flee_y, flee_x)
+    fw_cc_vector = np.array((-flee_y, flee_x))
     return vel_max * fw_cc_vector
 
 def fw_c_policy(vel_guess, flee_vector, vel_max, **kwargs):
@@ -46,7 +46,7 @@ def fw_c_policy(vel_guess, flee_vector, vel_max, **kwargs):
     Move normal to obstacle in cw sense"""
 
     flee_x, flee_y = flee_vector
-    fw_c_vector = (flee_y, -flee_x)
+    fw_c_vector = np.array((flee_y, -flee_x))
     return vel_max * fw_c_vector
 
 def goal_policy(vel_guess,**kwargs):

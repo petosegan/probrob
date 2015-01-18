@@ -26,6 +26,10 @@ class Ensemble():
                                     , 0.0001**2
                                     , 0.0001**2
                                     ))
+		, diff_std=np.array((.5
+			           , .5
+				   , .1
+				   ))
                 ):
         self.N = N
         self.pose = np.array(pose)
@@ -35,12 +39,14 @@ class Ensemble():
         self.weight = np.ones(N) / N
         self.acc_std = np.sqrt(acc_var)
         self.meas_std = np.sqrt(meas_var)
+	self.diff_std = diff_std
 
     def pf_update(self, control_x, control_v):
         ''' Carry out update step of a particle filter algorithm'''
         num_part = self.x_ens.shape[0]
         acc = np.random.normal(0, self.acc_std, (num_part, 3))
-        self.x_ens = self.x_ens + self.dx + np.tile(control_x, (num_part, 1))
+	diffusion = np.random.normal(0, self.diff_std, (num_part, 3))
+        self.x_ens = self.x_ens + self.dx + np.tile(control_x, (num_part, 1)) + diffusion
         self.v_ens = self.v_ens + acc + control_v
         vx = self.v_ens[:,0]
 	vy = self.v_ens[:,1]
@@ -74,15 +80,15 @@ class Ensemble():
     def pf_sonar(self, scan, this_sonar, this_map):
         ''' Carry out measurement step of a particle filter algorithm
             , using sonar data '''
-        num_part = len(self.x_ens[0])
+        num_part = self.x_ens.shape[0]
         weight = np.zeros(num_part)
         for i in range(num_part):
-            weight[i] = np.exp(locate.scan_loglikelihood(
+            weight[i] = 1.0 / abs(locate.scan_loglikelihood(
 		    self.x_ens[i,:]
                                 , scan
                                 , this_map
                                 , this_sonar
-                                ))
+                                ))**2
         bad_weights = np.isnan(weight)
         weight[bad_weights] = 0
         weight = weight / np.sum(weight) # normalize
