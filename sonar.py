@@ -108,14 +108,7 @@ class Sonar():
         '''Return a sonar probability density of a specified ray'''
 
         x0, y0, phi = pose
-        if this_map.TRACES_CACHED:
-            x_idx = np.argmin(abs(this_map.xs - x0))
-            y_idx = np.argmin(abs(this_map.ys - y0))
-            th_idx = np.argmin(abs((this_map.cache_thetas -\
-                                    (th + phi))%(2*pi)))
-            true_r = this_map.cache[x_idx][y_idx][th_idx]
-        else:
-            true_r = this_map.ray_trace(pose, th, self.params['RMAX'])
+        true_r = this_map.ray_trace(pose, th, self.params['RMAX'])
         if true_r < self.params['RMAX']:
             p_gauss = np.exp(-0.5*(self.rs - true_r)**2 / self.GAUSS_VAR)
             p_gauss /= np.sum(p_gauss)

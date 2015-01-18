@@ -16,7 +16,6 @@ from math import floor, pi
 import ray_trace
 from sonar import Sonar
 
-os.chdir(os.path.dirname(os.path.realpath(__file__)))
 class OGMap():
     '''Representation of a square binary occupancy grid map'''
     def __init__(self, N, cache_file = 'trace_cache.npy'):
@@ -32,17 +31,7 @@ class OGMap():
         self.grid = np.ones((N,N), dtype=bool)
         self.edges = []
         self.rects = []
-        self.cache_file = cache_file
-        if os.path.isfile(self.cache_file):
-            self.cache = np.load(self.cache_file)
-            self.TRACES_CACHED = True
-            self.cache_thetas = np.linspace(0, 2*pi, self.cache.shape[2])
-            print 'found cache file'
-        else:
-            self.cache = None
-            self.TRACES_CACHED = False
-            self.cache_thetas = []
-        
+
     def show(self):
         '''Plot a top down view of the map'''
         plt.imshow(self.grid
@@ -91,30 +80,6 @@ class OGMap():
         plt.ylim((0,self.N))
         plt.draw()
         
-    def cache_traces(self, filename, NUM_THETA = 8, RMAX = 100):
-        f = open(filename, 'w')
-        f.write('')
-        
-        traces = np.zeros((self.N, self.N, NUM_THETA))
-        self.cache_thetas = np.linspace(0, 2*pi, NUM_THETA)
-        
-        xs = np.array(range(self.N))
-        ys = np.array(range(self.N))
-        
-        for x_idx, x in np.ndenumerate(xs):
-            print '%d out of %d'%(x, self.N)
-            for y_idx, y in np.ndenumerate(ys):
-                for th_idx, th in np.ndenumerate(self.cache_thetas):
-                    traces[x_idx][y_idx][th_idx] = self.ray_trace(
-                                                    np.array((x, y, th))
-                                                    ,  0
-                                                    , RMAX
-                                                    )
-        
-        np.save(filename, traces)
-        f.close()
-        self.CACHED = True
-
     def collision(self, x, y):
         '''Check if point (x, y) lies in an obstacle'''
         for rect in self.rects:
