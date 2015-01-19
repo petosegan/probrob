@@ -227,7 +227,7 @@ class Goal():
         )
 
 
-if __name__ == "__main__":
+def main():
     print """Legend:
         Yellow star\t -\t True position of robot
         Blue arrows\t -\t Particle cloud
@@ -262,3 +262,6 @@ if __name__ == "__main__":
         print "SUCCESS"
     else:
         print "FAILURE"
+
+if __name__ == "__main__":
+    main()
