@@ -36,6 +36,7 @@ class Robot():
         self.omega_max = self.parameters.omega_max
         self.displacement_slowdown = self.parameters.displacement_slowdown
         self.avoid_threshold = self.parameters.avoid_threshold
+        self.fig, self.ax = plt.subplots()
 
     def situate(self, some_map, pose, goal):
         """
@@ -52,6 +53,14 @@ class Robot():
 
         self.goal_attained = False
         self.crashed = False
+        self.this_map.show()
+        self.goal.show()
+        x0, y0, phi = self.pose
+        self.flee_vector_artist = self.ax.quiver(x0, y0, 1, 0, color='r')
+        self.pose_dot_artist, = self.ax.plot(x0, y0, 'o', color='g', markersize=10)
+        self.pose_arrow_artist = self.ax.quiver(x0, y0, x0 * cos(phi), y0 * sin(phi))
+        self.scan_artist, = self.ax.plot([], [], 'o', color='r', markersize=5)
+
 
     def automate(self, num_steps=100):
         """
@@ -82,49 +91,31 @@ class Robot():
             pass
 
     def show_state(self):
-        """
-
-
-        """
-        plt.cla()
-        self.this_map.show()
-        self.goal.show()
         self.show_pose()
         self.show_flee_vector()
-        self.last_scan.show()
-        plt.xlim(0, 100)
-        plt.ylim(0, 100)
-        plt.draw()
+        self.show_last_scan()
+        plt.xlim(0, self.this_map.gridsize)
+        plt.ylim(0, self.this_map.gridsize)
+
+        self.fig.canvas.flush_events()
 
     def show_pose(self):
-        """
-
-
-        """
         x0, y0, phi = self.pose
-        plt.plot(x0
-                 , y0
-                 , 'o', color='g'
-                 , markersize=10
-        )
-        plt.quiver(x0
-                   , y0
-                   , np.cos(phi)
-                   , np.sin(phi)
-        )
+        self.pose_dot_artist.set_xdata(x0)
+        self.pose_dot_artist.set_ydata(y0)
+        self.pose_arrow_artist.set_offsets([x0, y0])
+        self.pose_arrow_artist.set_UVC(cos(phi), sin(phi))
 
     def show_flee_vector(self):
-        """
-
-
-        """
         x0, y0, _ = self.pose
-        plt.quiver(x0
-                   , y0
-                   , self.flee_vector()[0]
-                   , self.flee_vector()[1]
-                   , color='r'
-        )
+        fvx, fvy = self.flee_vector()
+        self.flee_vector_artist.set_offsets([x0, y0])
+        self.flee_vector_artist.set_UVC(fvx, fvy)
+
+    def show_last_scan(self):
+        self.scan_artist.set_xdata(self.last_scan.lab_exes)
+        self.scan_artist.set_ydata(self.last_scan.lab_wyes)
+
 
     def control_policy(self):
         """return appropriate control vectors"""

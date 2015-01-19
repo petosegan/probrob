@@ -31,9 +31,6 @@ class RobotPlotter(robot.Robot):
         plt.xlim(0, self.this_map.gridsize)
         plt.ylim(0, self.this_map.gridsize)
 
-        #self.ax.draw_artist(self.pose_dot_artist)
-
-        #self.fig.canvas.draw()
         self.fig.canvas.flush_events()
 
     def show_pose(self):

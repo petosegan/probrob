@@ -43,6 +43,7 @@ class RobotProb(Robot):
                 , some_ens):
         Robot.situate(self, some_map, this_pose, some_goal)
         self.ensemble = some_ens
+        self.ensemble_artist = self.ax.quiver([], [], [], [], color='b', alpha='0.1') 
 
     def command(self, control_x, control_v):
         Robot.command(self, control_x, control_v)
@@ -77,30 +78,15 @@ class RobotProb(Robot):
         return pos_guess, vel_guess
 
     def show_state(self):
-        x0, y0, phi = self.pose
-        plt.cla()
-        self.this_map.show()
-        plt.plot(x0
-                 , y0
-                 , 'o'
-                 , color='b'
-                 , markersize=10
-        )
-        plt.quiver(x0
-                   , y0
-                   , np.cos(phi)
-                   , np.sin(phi)
-                   , color='g'
-                   , headwidth=1.5
-                   , headlength=10
-        )
-        self.last_scan.show()
-        self.ensemble.show()
-        self.goal.show()
-        plt.xlim(0, self.this_map.gridsize)
-        plt.ylim(0, self.this_map.gridsize)
-        plt.draw()
+        self.show_ensemble()
+        Robot.show_state(self)
 
+    def show_ensemble(self):
+        exes = self.ensemble.x_ens[:, 0]
+        wyes = self.ensemble.x_ens[:, 1]
+        phis = self.ensemble.x_ens[:, 2]
+        self.ensemble_artist.set_offsets(zip(exes, wyes))
+        self.ensemble_artist.set_UVC(np.cos(phis), np.sin(phis))
 
 if __name__ == "__main__":
     print """Legend:
@@ -131,8 +117,5 @@ if __name__ == "__main__":
     this_robot.situate(this_map, true_pose, this_goal, this_ens)
 
     plt.ion()
-    fig = plt.figure()
-    fig.set_size_inches(20, 20)
-    plt.get_current_fig_manager().resize(1000, 1000)
 
     this_robot.automate(num_steps=100)

@@ -30,7 +30,7 @@ class RobotProbHA(robot_prob.RobotProb, robot_ha.RobotHA):
                 , some_goal
                 , some_ens):
         robot_prob.RobotProb.situate(self, some_map, this_pose, some_goal, some_ens)
-        robot_ha.RobotHA.situate(self, some_map, this_pose, some_goal)
+        self.fixed_params['goal_radius'] = self.goal.radius
 
     def control_policy(self):
         return robot_ha.RobotHA.control_policy(self)
@@ -69,9 +69,6 @@ def main():
     this_robot.situate(this_map, true_pose, this_goal, this_ens)
 
     plt.ion()
-    fig = plt.figure()
-    fig.set_size_inches(20,20)
-    plt.get_current_fig_manager().resize(1000, 1000)
 
     # print "Robot Running"
     this_robot.automate(num_steps=100)
