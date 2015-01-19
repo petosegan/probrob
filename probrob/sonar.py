@@ -126,15 +126,14 @@ class Sonar():
 
 class Scan():
     """Representation of a sonar scan result"""
-
     def __init__(self, pose, thetas, rs):
         self.pose = pose
         x0, y0, phi = pose
         self.x0 = x0
         self.y0 = y0
         self.phi = phi
-        self.thetas = thetas
-        self.rs = rs
+        self.thetas = np.array(thetas)
+        self.rs = np.array(rs)
         self.pings = zip(self.thetas, self.rs)
         self.obst_distance = min(self.rs)
 
@@ -146,3 +145,11 @@ class Scan():
                  , markersize=markersize
                  , **kwargs
         )
+
+    @property
+    def lab_exes(self):
+        return self.x0 + self.rs * np.cos(self.thetas + self.phi)
+
+    @property
+    def lab_wyes(self):
+        return self.y0 + self.rs * np.sin(self.thetas + self.phi)

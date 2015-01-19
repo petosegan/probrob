@@ -70,17 +70,17 @@ def main():
     )
 
     plt.ion()
-    this_robot.automate(num_steps=300)
+    this_robot.automate(num_steps=10)
     if robot.check_success(this_goal, this_robot):
         print "SUCCESS"
     else:
         print "FAILURE"
-    plt.figure()
-    ping_coords = this_robot.scan_map.ping_points
-    plt.plot(*zip(*ping_coords), marker='o', linestyle='')
-    plt.xlim(0, this_map.gridsize)
-    plt.ylim(0, this_map.gridsize)
-    plt.show(block=True)
+    # plt.figure()
+    # ping_coords = this_robot.scan_map.ping_points
+    # plt.plot(*zip(*ping_coords), marker='o', linestyle='')
+    # plt.xlim(0, this_map.gridsize)
+    # plt.ylim(0, this_map.gridsize)
+    # plt.show(block=True)
 
 
 if __name__ == '__main__':
