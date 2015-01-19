@@ -62,9 +62,9 @@ def main():
                              , params=sonar_params
     )
     this_ens = mcl.Ensemble(pose=true_pose
-                            , nn=50
-                            , acc_var=np.array((0.0001, 0.0001, 0.0001))
-                            , meas_var=np.array((0.01, 0.01, 0.01)))
+                            , nn=100
+                            , acc_var=np.array((0.001, 0.001, 0.001))
+                            , meas_var=np.array((0.1, 0.1, 0.1)))
     this_robot = RobotProbHA(parameters, this_sonar)
     this_robot.situate(this_map, true_pose, this_goal, this_ens)
 

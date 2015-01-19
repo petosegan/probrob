@@ -228,7 +228,7 @@ def main():
 
     these_parameters = Parameters(vel_max=1
                                   , omega_max=0.1
-                                  , displacement_slowdown=25
+                                  , displacement_slowdown=5
                                   , avoid_threshold=5
     )
     true_pose = (20, 90, pi)
