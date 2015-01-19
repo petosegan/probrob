@@ -41,8 +41,8 @@ def loglike_map(pose, some_scan, some_map, some_sonar, ll_n=100
     this_x0, this_y0, this_phi = pose
     this_phi_guess = this_phi
 
-    xs = np.linspace(1, some_map.N - 1, ll_n)
-    ys = np.linspace(1, some_map.N - 1, ll_n)
+    xs = np.linspace(1, some_map.gridsize - 1, ll_n)
+    ys = np.linspace(1, some_map.gridsize - 1, ll_n)
     ll = np.zeros((ll_n, ll_n))
     for i, xpos in np.ndenumerate(xs):
         for j, ypos in np.ndenumerate(ys):
@@ -80,6 +80,8 @@ def loglike_map(pose, some_scan, some_map, some_sonar, ll_n=100
                  , color='r'
                  , markersize=10
         )
+        plt.xlim(0, some_map.gridsize)
+        plt.ylim(0, some_map.gridsize)
         plt.draw()
     return ll, (xs, ys)
 
@@ -87,7 +89,7 @@ def loglike_map(pose, some_scan, some_map, some_sonar, ll_n=100
 if __name__ == "__main__":
     from mapdef import mapdef
 
-    N_THETA = 2
+    N_THETA = 10
 
     true_pose = np.array((50, 50, 0))
     x0, y0, phi = true_pose

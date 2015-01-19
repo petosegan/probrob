@@ -1,5 +1,7 @@
+import cython
 from math import sin, cos
 
+@cython.cdivision(True)
 def ray_trace(edges, pose, theta, rmax):
     ''' Test for intersection of a ray with edges in the map
     
@@ -23,10 +25,10 @@ def ray_trace(edges, pose, theta, rmax):
         den = q0*s1 - q1*s0
         pr0, pr1 = x0 - r0, y0 - r1
         cross_pr_s = pr0*s1 - pr1*s0
-        if den == 0:
-            if cross_pr_s == 0:
+        if den == 0.0:
+            if cross_pr_s == 0.0:
                 pr_dot_s = pr0*s0 + pr1*s1
-                if pr_dot_s < 0:
+                if pr_dot_s < 0.0:
                     dists.append((pr0*pr0 + pr1*pr1)**0.5)
                     # print('parallel, intersecting')
                     continue
@@ -34,13 +36,13 @@ def ray_trace(edges, pose, theta, rmax):
                 # print('parallel, non-intersecting')
                 continue
         u = cross_pr_s / den
-        if u > 1 or u < 0:
+        if u > 1.0 or u < 0.0:
             dists.append(rmax)
             # print ('non-intersecting')
             continue
         cross_pr_q = pr0*q1 - pr1*q0
         t = cross_pr_q / den
-        if t < 0:
+        if t < 0.0:
             dists.append(rmax)
             # print('wrong side')
             continue

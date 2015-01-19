@@ -94,7 +94,7 @@ class Ensemble():
 
     def inject_random(self, pose, some_scan, some_sonar, some_map, num_inject=10):
         """add particles at high likelihood locations"""
-        ll_n = some_map.N / 4
+        ll_n = some_map.gridsize / 4
 
         # calculate a coarse likelihood map, and process to remove points in
         # obstacles
@@ -178,8 +178,8 @@ class Ensemble():
         self.show()
         this_map.show()
         scan.show()
-        plt.xlim(0, this_map.N)
-        plt.ylim(0, this_map.N)
+        plt.xlim(0, this_map.gridsize)
+        plt.ylim(0, this_map.gridsize)
         plt.draw()
 
 

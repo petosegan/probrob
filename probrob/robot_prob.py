@@ -97,8 +97,8 @@ class RobotProb(Robot):
         self.last_scan.show()
         self.ensemble.show()
         self.goal.show()
-        plt.xlim(0, self.this_map.N)
-        plt.ylim(0, self.this_map.N)
+        plt.xlim(0, self.this_map.gridsize)
+        plt.ylim(0, self.this_map.gridsize)
         plt.draw()
 
 
@@ -124,7 +124,7 @@ if __name__ == "__main__":
                              , params=sonar_params
     )
     this_ens = mcl.Ensemble(pose=true_pose
-                            , N=50
+                            , nn=50
                             , acc_var=np.array((.0001, .0001, .0001))
                             , meas_var=np.array((.01, .01, .01)))
     this_robot = RobotProb(parameters, this_sonar)
@@ -135,4 +135,4 @@ if __name__ == "__main__":
     fig.set_size_inches(20, 20)
     plt.get_current_fig_manager().resize(1000, 1000)
 
-    this_robot.automate(numsteps=100)
+    this_robot.automate(num_steps=100)

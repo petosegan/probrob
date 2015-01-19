@@ -69,6 +69,8 @@ class Sonar():
             simscan.show(markersize=5)
             plt.plot(x0, y0, '.', color='b', markersize=20)
             plt.title('Simulated Sonar Scan')
+            plt.xlim(0, this_map.gridsize)
+            plt.ylim(0, this_map.gridsize)
             plt.draw()
 
         return Scan(pose, theta, r_meas)
@@ -136,7 +138,7 @@ class Scan():
         self.pings = zip(self.thetas, self.rs)
         self.obst_distance = min(self.rs)
 
-    def show(self, markersize=10, color='y', **kwargs):
+    def show(self, markersize=10, color='r', **kwargs):
         plt.plot(self.x0 + self.rs * np.cos(self.thetas + self.phi)
                  , self.y0 + self.rs * np.sin(self.thetas + self.phi)
                  , '.'

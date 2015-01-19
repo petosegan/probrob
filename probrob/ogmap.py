@@ -109,9 +109,9 @@ if __name__ == "__main__":
     from mapdef import mapdef
 
     this_map = mapdef()
-    this_sonar = Sonar(NUM_THETA=200, GAUSS_VAR=1)
+    this_sonar = Sonar(num_theta=200, gauss_var=1)
     pose = (50, 50, 0)
 
     plt.ion()
-    this_sonar.simulate_scan(pose, this_map, PLOT_ON=True)
+    this_sonar.simulate_scan(pose, this_map, plot_on=True)
     plt.show(block=True)

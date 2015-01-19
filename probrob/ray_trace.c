@@ -231,8 +231,8 @@ void __Pyx_call_destructor(T* x) {
 #define _USE_MATH_DEFINES
 #endif
 #include <math.h>
-#define __PYX_HAVE__ray_trace
-#define __PYX_HAVE_API__ray_trace
+#define __PYX_HAVE__probrob__ray_trace
+#define __PYX_HAVE_API__probrob__ray_trace
 #ifdef _OPENMP
 #include <omp.h>
 #endif /* _OPENMP */
@@ -415,7 +415,7 @@ static const char *__pyx_filename;
 
 
 static const char *__pyx_f[] = {
-  "ray_trace.pyx",
+  "probrob/ray_trace.pyx",
 };
 
 /*--- Type declarations ---*/
@@ -566,10 +566,6 @@ static CYTHON_INLINE int __Pyx_PyList_Append(PyObject* list, PyObject* x) {
 #define __Pyx_PyList_Append(L,x) PyList_Append(L,x)
 #endif
 
-#ifndef __PYX_FORCE_INIT_THREADS
-  #define __PYX_FORCE_INIT_THREADS 0
-#endif
-
 static PyObject* __Pyx_ImportFrom(PyObject* module, PyObject* name);
 
 typedef struct {
@@ -602,13 +598,15 @@ static int __Pyx_check_binary_version(void);
 static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
 
-/* Module declarations from 'ray_trace' */
-#define __Pyx_MODULE_NAME "ray_trace"
-int __pyx_module_is_main_ray_trace = 0;
+/* Module declarations from 'cython' */
 
-/* Implementation of 'ray_trace' */
+/* Module declarations from 'probrob.ray_trace' */
+#define __Pyx_MODULE_NAME "probrob.ray_trace"
+int __pyx_module_is_main_probrob__ray_trace = 0;
+
+/* Implementation of 'probrob.ray_trace' */
 static PyObject *__pyx_builtin_min;
-static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_edges, PyObject *__pyx_v_pose, PyObject *__pyx_v_theta, PyObject *__pyx_v_rmax); /* proto */
+static PyObject *__pyx_pf_7probrob_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_edges, PyObject *__pyx_v_pose, PyObject *__pyx_v_theta, PyObject *__pyx_v_rmax); /* proto */
 static char __pyx_k_t[] = "t";
 static char __pyx_k_u[] = "u";
 static char __pyx_k_q0[] = "q0";
@@ -640,7 +638,8 @@ static char __pyx_k_pr_dot_s[] = "pr_dot_s";
 static char __pyx_k_ray_trace[] = "ray_trace";
 static char __pyx_k_cross_pr_q[] = "cross_pr_q";
 static char __pyx_k_cross_pr_s[] = "cross_pr_s";
-static char __pyx_k_home_will_projects_probrob_ray[] = "/home/will/projects/probrob/ray_trace.pyx";
+static char __pyx_k_probrob_ray_trace[] = "probrob.ray_trace";
+static char __pyx_k_home_will_projects_probrob_prob[] = "/home/will/projects/probrob/probrob/ray_trace.pyx";
 static PyObject *__pyx_n_s_cos;
 static PyObject *__pyx_n_s_cross_pr_q;
 static PyObject *__pyx_n_s_cross_pr_s;
@@ -648,7 +647,7 @@ static PyObject *__pyx_n_s_den;
 static PyObject *__pyx_n_s_dists;
 static PyObject *__pyx_n_s_edge;
 static PyObject *__pyx_n_s_edges;
-static PyObject *__pyx_kp_s_home_will_projects_probrob_ray;
+static PyObject *__pyx_kp_s_home_will_projects_probrob_prob;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_math;
@@ -658,6 +657,7 @@ static PyObject *__pyx_n_s_pose;
 static PyObject *__pyx_n_s_pr0;
 static PyObject *__pyx_n_s_pr1;
 static PyObject *__pyx_n_s_pr_dot_s;
+static PyObject *__pyx_n_s_probrob_ray_trace;
 static PyObject *__pyx_n_s_q0;
 static PyObject *__pyx_n_s_q1;
 static PyObject *__pyx_n_s_r0;
@@ -676,19 +676,19 @@ static PyObject *__pyx_n_s_y0;
 static PyObject *__pyx_tuple_;
 static PyObject *__pyx_codeobj__2;
 
-/* "ray_trace.pyx":3
- * from math import sin, cos
+/* "probrob/ray_trace.pyx":5
  * 
+ * @cython.cdivision(True)
  * def ray_trace(edges, pose, theta, rmax):             # <<<<<<<<<<<<<<
  *     ''' Test for intersection of a ray with edges in the map
  * 
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_9ray_trace_1ray_trace(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_9ray_trace_ray_trace[] = " Test for intersection of a ray with edges in the map\n    \n    Args:\n      pose (1x3 array): robot pose, as (x,y) position and heading (rad)\n      theta (radian): heading of ray_trace, in the robot frame\n      rmax (int): maximum range of ray tracing\n    ";
-static PyMethodDef __pyx_mdef_9ray_trace_1ray_trace = {"ray_trace", (PyCFunction)__pyx_pw_9ray_trace_1ray_trace, METH_VARARGS|METH_KEYWORDS, __pyx_doc_9ray_trace_ray_trace};
-static PyObject *__pyx_pw_9ray_trace_1ray_trace(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_7probrob_9ray_trace_1ray_trace(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_7probrob_9ray_trace_ray_trace[] = " Test for intersection of a ray with edges in the map\n    \n    Args:\n      pose (1x3 array): robot pose, as (x,y) position and heading (rad)\n      theta (radian): heading of ray_trace, in the robot frame\n      rmax (int): maximum range of ray tracing\n    ";
+static PyMethodDef __pyx_mdef_7probrob_9ray_trace_1ray_trace = {"ray_trace", (PyCFunction)__pyx_pw_7probrob_9ray_trace_1ray_trace, METH_VARARGS|METH_KEYWORDS, __pyx_doc_7probrob_9ray_trace_ray_trace};
+static PyObject *__pyx_pw_7probrob_9ray_trace_1ray_trace(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_edges = 0;
   PyObject *__pyx_v_pose = 0;
   PyObject *__pyx_v_theta = 0;
@@ -721,21 +721,21 @@ static PyObject *__pyx_pw_9ray_trace_1ray_trace(PyObject *__pyx_self, PyObject *
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_pose)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("ray_trace", 1, 4, 4, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 3; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("ray_trace", 1, 4, 4, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("ray_trace", 1, 4, 4, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 3; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("ray_trace", 1, 4, 4, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_rmax)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("ray_trace", 1, 4, 4, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 3; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("ray_trace", 1, 4, 4, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "ray_trace") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 3; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "ray_trace") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -752,20 +752,20 @@ static PyObject *__pyx_pw_9ray_trace_1ray_trace(PyObject *__pyx_self, PyObject *
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("ray_trace", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 3; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("ray_trace", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
-  __Pyx_AddTraceback("ray_trace.ray_trace", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("probrob.ray_trace.ray_trace", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_9ray_trace_ray_trace(__pyx_self, __pyx_v_edges, __pyx_v_pose, __pyx_v_theta, __pyx_v_rmax);
+  __pyx_r = __pyx_pf_7probrob_9ray_trace_ray_trace(__pyx_self, __pyx_v_edges, __pyx_v_pose, __pyx_v_theta, __pyx_v_rmax);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_edges, PyObject *__pyx_v_pose, PyObject *__pyx_v_theta, PyObject *__pyx_v_rmax) {
+static PyObject *__pyx_pf_7probrob_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_edges, PyObject *__pyx_v_pose, PyObject *__pyx_v_theta, PyObject *__pyx_v_rmax) {
   PyObject *__pyx_v_dists = NULL;
   float __pyx_v_r0;
   float __pyx_v_r1;
@@ -806,19 +806,19 @@ static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_sel
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("ray_trace", 0);
 
-  /* "ray_trace.pyx":11
+  /* "probrob/ray_trace.pyx":13
  *       rmax (int): maximum range of ray tracing
  *     '''
  *     dists = []             # <<<<<<<<<<<<<<
  * 
  *     cdef float r0, r1, q0, q1
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 11; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 13; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_dists = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "ray_trace.pyx":18
+  /* "probrob/ray_trace.pyx":20
  *     cdef float pr_dot_s, u, cross_pr_q, t
  * 
  *     x0, y0, phi = pose             # <<<<<<<<<<<<<<
@@ -835,7 +835,7 @@ static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_sel
     if (unlikely(size != 3)) {
       if (size > 3) __Pyx_RaiseTooManyValuesError(3);
       else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
     #if CYTHON_COMPILING_IN_CPYTHON
     if (likely(PyTuple_CheckExact(sequence))) {
@@ -851,16 +851,16 @@ static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_sel
     __Pyx_INCREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_t_3);
     #else
-    __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     #endif
   } else {
     Py_ssize_t index = -1;
-    __pyx_t_4 = PyObject_GetIter(__pyx_v_pose); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = PyObject_GetIter(__pyx_v_pose); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = Py_TYPE(__pyx_t_4)->tp_iternext;
     index = 0; __pyx_t_1 = __pyx_t_5(__pyx_t_4); if (unlikely(!__pyx_t_1)) goto __pyx_L3_unpacking_failed;
@@ -869,7 +869,7 @@ static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_sel
     __Pyx_GOTREF(__pyx_t_2);
     index = 2; __pyx_t_3 = __pyx_t_5(__pyx_t_4); if (unlikely(!__pyx_t_3)) goto __pyx_L3_unpacking_failed;
     __Pyx_GOTREF(__pyx_t_3);
-    if (__Pyx_IternextUnpackEndCheck(__pyx_t_5(__pyx_t_4), 3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_5(__pyx_t_4), 3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __pyx_t_5 = NULL;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     goto __pyx_L4_unpacking_done;
@@ -877,31 +877,31 @@ static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_sel
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_t_5 = NULL;
     if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __pyx_L4_unpacking_done:;
   }
-  __pyx_t_6 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_6 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_6 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_7 = __pyx_PyFloat_AsFloat(__pyx_t_2); if (unlikely((__pyx_t_7 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_7 = __pyx_PyFloat_AsFloat(__pyx_t_2); if (unlikely((__pyx_t_7 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_8 = __pyx_PyFloat_AsFloat(__pyx_t_3); if (unlikely((__pyx_t_8 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_8 = __pyx_PyFloat_AsFloat(__pyx_t_3); if (unlikely((__pyx_t_8 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_x0 = __pyx_t_6;
   __pyx_v_y0 = __pyx_t_7;
   __pyx_v_phi = __pyx_t_8;
 
-  /* "ray_trace.pyx":19
+  /* "probrob/ray_trace.pyx":21
  * 
  *     x0, y0, phi = pose
  *     s0, s1 = cos(theta + phi), sin(theta + phi)             # <<<<<<<<<<<<<<
  *     for edge in edges:
  *         r0, r1 = edge[0], edge[1]
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_cos); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_cos); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_phi); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_phi); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_4 = PyNumber_Add(__pyx_v_theta, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = PyNumber_Add(__pyx_v_theta, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = NULL;
@@ -915,28 +915,28 @@ static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_sel
     }
   }
   if (!__pyx_t_1) {
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_GOTREF(__pyx_t_3);
   } else {
-    __pyx_t_9 = PyTuple_New(1+1); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_9 = PyTuple_New(1+1); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_9);
     PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_1); __Pyx_GIVEREF(__pyx_t_1); __pyx_t_1 = NULL;
     PyTuple_SET_ITEM(__pyx_t_9, 0+1, __pyx_t_4);
     __Pyx_GIVEREF(__pyx_t_4);
     __pyx_t_4 = 0;
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_9, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_9, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_8 = __pyx_PyFloat_AsFloat(__pyx_t_3); if (unlikely((__pyx_t_8 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_8 = __pyx_PyFloat_AsFloat(__pyx_t_3); if (unlikely((__pyx_t_8 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_sin); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_sin); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_9 = PyFloat_FromDouble(__pyx_v_phi); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_9 = PyFloat_FromDouble(__pyx_v_phi); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_9);
-  __pyx_t_4 = PyNumber_Add(__pyx_v_theta, __pyx_t_9); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = PyNumber_Add(__pyx_v_theta, __pyx_t_9); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
   __pyx_t_9 = NULL;
@@ -950,27 +950,27 @@ static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_sel
     }
   }
   if (!__pyx_t_9) {
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_GOTREF(__pyx_t_3);
   } else {
-    __pyx_t_1 = PyTuple_New(1+1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = PyTuple_New(1+1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_9); __Pyx_GIVEREF(__pyx_t_9); __pyx_t_9 = NULL;
     PyTuple_SET_ITEM(__pyx_t_1, 0+1, __pyx_t_4);
     __Pyx_GIVEREF(__pyx_t_4);
     __pyx_t_4 = 0;
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_7 = __pyx_PyFloat_AsFloat(__pyx_t_3); if (unlikely((__pyx_t_7 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_7 = __pyx_PyFloat_AsFloat(__pyx_t_3); if (unlikely((__pyx_t_7 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_s0 = __pyx_t_8;
   __pyx_v_s1 = __pyx_t_7;
 
-  /* "ray_trace.pyx":20
+  /* "probrob/ray_trace.pyx":22
  *     x0, y0, phi = pose
  *     s0, s1 = cos(theta + phi), sin(theta + phi)
  *     for edge in edges:             # <<<<<<<<<<<<<<
@@ -981,25 +981,25 @@ static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_sel
     __pyx_t_3 = __pyx_v_edges; __Pyx_INCREF(__pyx_t_3); __pyx_t_10 = 0;
     __pyx_t_11 = NULL;
   } else {
-    __pyx_t_10 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_v_edges); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_10 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_v_edges); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_11 = Py_TYPE(__pyx_t_3)->tp_iternext; if (unlikely(!__pyx_t_11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_11 = Py_TYPE(__pyx_t_3)->tp_iternext; if (unlikely(!__pyx_t_11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   for (;;) {
     if (likely(!__pyx_t_11)) {
       if (likely(PyList_CheckExact(__pyx_t_3))) {
         if (__pyx_t_10 >= PyList_GET_SIZE(__pyx_t_3)) break;
         #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_10); __Pyx_INCREF(__pyx_t_2); __pyx_t_10++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_10); __Pyx_INCREF(__pyx_t_2); __pyx_t_10++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         #else
-        __pyx_t_2 = PySequence_ITEM(__pyx_t_3, __pyx_t_10); __pyx_t_10++; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_2 = PySequence_ITEM(__pyx_t_3, __pyx_t_10); __pyx_t_10++; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         #endif
       } else {
         if (__pyx_t_10 >= PyTuple_GET_SIZE(__pyx_t_3)) break;
         #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_10); __Pyx_INCREF(__pyx_t_2); __pyx_t_10++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_10); __Pyx_INCREF(__pyx_t_2); __pyx_t_10++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         #else
-        __pyx_t_2 = PySequence_ITEM(__pyx_t_3, __pyx_t_10); __pyx_t_10++; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_2 = PySequence_ITEM(__pyx_t_3, __pyx_t_10); __pyx_t_10++; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         #endif
       }
     } else {
@@ -1008,7 +1008,7 @@ static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_sel
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          else {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         }
         break;
       }
@@ -1017,55 +1017,55 @@ static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_sel
     __Pyx_XDECREF_SET(__pyx_v_edge, __pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "ray_trace.pyx":21
+    /* "probrob/ray_trace.pyx":23
  *     s0, s1 = cos(theta + phi), sin(theta + phi)
  *     for edge in edges:
  *         r0, r1 = edge[0], edge[1]             # <<<<<<<<<<<<<<
  *         q0, q1 = edge[2] - r0, edge[3] - r1
  *         den = q0*s1 - q1*s0
  */
-    __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_edge, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_edge, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 23; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_7 = __pyx_PyFloat_AsFloat(__pyx_t_2); if (unlikely((__pyx_t_7 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_7 = __pyx_PyFloat_AsFloat(__pyx_t_2); if (unlikely((__pyx_t_7 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 23; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_edge, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_edge, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 23; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_8 = __pyx_PyFloat_AsFloat(__pyx_t_2); if (unlikely((__pyx_t_8 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_8 = __pyx_PyFloat_AsFloat(__pyx_t_2); if (unlikely((__pyx_t_8 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 23; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_v_r0 = __pyx_t_7;
     __pyx_v_r1 = __pyx_t_8;
 
-    /* "ray_trace.pyx":22
+    /* "probrob/ray_trace.pyx":24
  *     for edge in edges:
  *         r0, r1 = edge[0], edge[1]
  *         q0, q1 = edge[2] - r0, edge[3] - r1             # <<<<<<<<<<<<<<
  *         den = q0*s1 - q1*s0
  *         pr0, pr1 = x0 - r0, y0 - r1
  */
-    __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_edge, 2, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_edge, 2, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_r0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_r0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = PyNumber_Subtract(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = PyNumber_Subtract(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_8 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_8 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_8 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_8 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_edge, 3, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(__pyx_t_4 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_edge, 3, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(__pyx_t_4 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_r1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_r1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = PyNumber_Subtract(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyNumber_Subtract(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_7 = __pyx_PyFloat_AsFloat(__pyx_t_2); if (unlikely((__pyx_t_7 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_7 = __pyx_PyFloat_AsFloat(__pyx_t_2); if (unlikely((__pyx_t_7 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_v_q0 = __pyx_t_8;
     __pyx_v_q1 = __pyx_t_7;
 
-    /* "ray_trace.pyx":23
+    /* "probrob/ray_trace.pyx":25
  *         r0, r1 = edge[0], edge[1]
  *         q0, q1 = edge[2] - r0, edge[3] - r1
  *         den = q0*s1 - q1*s0             # <<<<<<<<<<<<<<
@@ -1074,79 +1074,79 @@ static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_sel
  */
     __pyx_v_den = ((__pyx_v_q0 * __pyx_v_s1) - (__pyx_v_q1 * __pyx_v_s0));
 
-    /* "ray_trace.pyx":24
+    /* "probrob/ray_trace.pyx":26
  *         q0, q1 = edge[2] - r0, edge[3] - r1
  *         den = q0*s1 - q1*s0
  *         pr0, pr1 = x0 - r0, y0 - r1             # <<<<<<<<<<<<<<
  *         cross_pr_s = pr0*s1 - pr1*s0
- *         if den == 0:
+ *         if den == 0.0:
  */
     __pyx_t_7 = (__pyx_v_x0 - __pyx_v_r0);
     __pyx_t_8 = (__pyx_v_y0 - __pyx_v_r1);
     __pyx_v_pr0 = __pyx_t_7;
     __pyx_v_pr1 = __pyx_t_8;
 
-    /* "ray_trace.pyx":25
+    /* "probrob/ray_trace.pyx":27
  *         den = q0*s1 - q1*s0
  *         pr0, pr1 = x0 - r0, y0 - r1
  *         cross_pr_s = pr0*s1 - pr1*s0             # <<<<<<<<<<<<<<
- *         if den == 0:
- *             if cross_pr_s == 0:
+ *         if den == 0.0:
+ *             if cross_pr_s == 0.0:
  */
     __pyx_v_cross_pr_s = ((__pyx_v_pr0 * __pyx_v_s1) - (__pyx_v_pr1 * __pyx_v_s0));
 
-    /* "ray_trace.pyx":26
+    /* "probrob/ray_trace.pyx":28
  *         pr0, pr1 = x0 - r0, y0 - r1
  *         cross_pr_s = pr0*s1 - pr1*s0
- *         if den == 0:             # <<<<<<<<<<<<<<
- *             if cross_pr_s == 0:
+ *         if den == 0.0:             # <<<<<<<<<<<<<<
+ *             if cross_pr_s == 0.0:
  *                 pr_dot_s = pr0*s0 + pr1*s1
  */
     __pyx_t_12 = ((__pyx_v_den == 0.0) != 0);
     if (__pyx_t_12) {
 
-      /* "ray_trace.pyx":27
+      /* "probrob/ray_trace.pyx":29
  *         cross_pr_s = pr0*s1 - pr1*s0
- *         if den == 0:
- *             if cross_pr_s == 0:             # <<<<<<<<<<<<<<
+ *         if den == 0.0:
+ *             if cross_pr_s == 0.0:             # <<<<<<<<<<<<<<
  *                 pr_dot_s = pr0*s0 + pr1*s1
- *                 if pr_dot_s < 0:
+ *                 if pr_dot_s < 0.0:
  */
       __pyx_t_12 = ((__pyx_v_cross_pr_s == 0.0) != 0);
       if (__pyx_t_12) {
 
-        /* "ray_trace.pyx":28
- *         if den == 0:
- *             if cross_pr_s == 0:
+        /* "probrob/ray_trace.pyx":30
+ *         if den == 0.0:
+ *             if cross_pr_s == 0.0:
  *                 pr_dot_s = pr0*s0 + pr1*s1             # <<<<<<<<<<<<<<
- *                 if pr_dot_s < 0:
+ *                 if pr_dot_s < 0.0:
  *                     dists.append((pr0*pr0 + pr1*pr1)**0.5)
  */
         __pyx_v_pr_dot_s = ((__pyx_v_pr0 * __pyx_v_s0) + (__pyx_v_pr1 * __pyx_v_s1));
 
-        /* "ray_trace.pyx":29
- *             if cross_pr_s == 0:
+        /* "probrob/ray_trace.pyx":31
+ *             if cross_pr_s == 0.0:
  *                 pr_dot_s = pr0*s0 + pr1*s1
- *                 if pr_dot_s < 0:             # <<<<<<<<<<<<<<
+ *                 if pr_dot_s < 0.0:             # <<<<<<<<<<<<<<
  *                     dists.append((pr0*pr0 + pr1*pr1)**0.5)
  *                     # print('parallel, intersecting')
  */
         __pyx_t_12 = ((__pyx_v_pr_dot_s < 0.0) != 0);
         if (__pyx_t_12) {
 
-          /* "ray_trace.pyx":30
+          /* "probrob/ray_trace.pyx":32
  *                 pr_dot_s = pr0*s0 + pr1*s1
- *                 if pr_dot_s < 0:
+ *                 if pr_dot_s < 0.0:
  *                     dists.append((pr0*pr0 + pr1*pr1)**0.5)             # <<<<<<<<<<<<<<
  *                     # print('parallel, intersecting')
  *                     continue
  */
-          __pyx_t_2 = PyFloat_FromDouble(pow(((double)((__pyx_v_pr0 * __pyx_v_pr0) + (__pyx_v_pr1 * __pyx_v_pr1))), 0.5)); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_2 = PyFloat_FromDouble(pow(((double)((__pyx_v_pr0 * __pyx_v_pr0) + (__pyx_v_pr1 * __pyx_v_pr1))), 0.5)); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_dists, __pyx_t_2); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_dists, __pyx_t_2); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-          /* "ray_trace.pyx":32
+          /* "probrob/ray_trace.pyx":34
  *                     dists.append((pr0*pr0 + pr1*pr1)**0.5)
  *                     # print('parallel, intersecting')
  *                     continue             # <<<<<<<<<<<<<<
@@ -1156,21 +1156,21 @@ static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_sel
           goto __pyx_L5_continue;
         }
 
-        /* "ray_trace.pyx":33
+        /* "probrob/ray_trace.pyx":35
  *                     # print('parallel, intersecting')
  *                     continue
  *                 dists.append(rmax)             # <<<<<<<<<<<<<<
  *                 # print('parallel, non-intersecting')
  *                 continue
  */
-        __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_dists, __pyx_v_rmax); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 33; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_dists, __pyx_v_rmax); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-        /* "ray_trace.pyx":35
+        /* "probrob/ray_trace.pyx":37
  *                 dists.append(rmax)
  *                 # print('parallel, non-intersecting')
  *                 continue             # <<<<<<<<<<<<<<
  *         u = cross_pr_s / den
- *         if u > 1 or u < 0:
+ *         if u > 1.0 or u < 0.0:
  */
         goto __pyx_L5_continue;
       }
@@ -1178,29 +1178,19 @@ static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_sel
     }
     __pyx_L7:;
 
-    /* "ray_trace.pyx":36
+    /* "probrob/ray_trace.pyx":38
  *                 # print('parallel, non-intersecting')
  *                 continue
  *         u = cross_pr_s / den             # <<<<<<<<<<<<<<
- *         if u > 1 or u < 0:
+ *         if u > 1.0 or u < 0.0:
  *             dists.append(rmax)
  */
-    if (unlikely(__pyx_v_den == 0)) {
-      #ifdef WITH_THREAD
-      PyGILState_STATE __pyx_gilstate_save = PyGILState_Ensure();
-      #endif
-      PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      #ifdef WITH_THREAD
-      PyGILState_Release(__pyx_gilstate_save);
-      #endif
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    }
     __pyx_v_u = (__pyx_v_cross_pr_s / __pyx_v_den);
 
-    /* "ray_trace.pyx":37
+    /* "probrob/ray_trace.pyx":39
  *                 continue
  *         u = cross_pr_s / den
- *         if u > 1 or u < 0:             # <<<<<<<<<<<<<<
+ *         if u > 1.0 or u < 0.0:             # <<<<<<<<<<<<<<
  *             dists.append(rmax)
  *             # print ('non-intersecting')
  */
@@ -1215,16 +1205,16 @@ static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_sel
     __pyx_L11_bool_binop_done:;
     if (__pyx_t_12) {
 
-      /* "ray_trace.pyx":38
+      /* "probrob/ray_trace.pyx":40
  *         u = cross_pr_s / den
- *         if u > 1 or u < 0:
+ *         if u > 1.0 or u < 0.0:
  *             dists.append(rmax)             # <<<<<<<<<<<<<<
  *             # print ('non-intersecting')
  *             continue
  */
-      __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_dists, __pyx_v_rmax); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_dists, __pyx_v_rmax); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 40; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-      /* "ray_trace.pyx":40
+      /* "probrob/ray_trace.pyx":42
  *             dists.append(rmax)
  *             # print ('non-intersecting')
  *             continue             # <<<<<<<<<<<<<<
@@ -1234,54 +1224,44 @@ static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_sel
       goto __pyx_L5_continue;
     }
 
-    /* "ray_trace.pyx":41
+    /* "probrob/ray_trace.pyx":43
  *             # print ('non-intersecting')
  *             continue
  *         cross_pr_q = pr0*q1 - pr1*q0             # <<<<<<<<<<<<<<
  *         t = cross_pr_q / den
- *         if t < 0:
+ *         if t < 0.0:
  */
     __pyx_v_cross_pr_q = ((__pyx_v_pr0 * __pyx_v_q1) - (__pyx_v_pr1 * __pyx_v_q0));
 
-    /* "ray_trace.pyx":42
+    /* "probrob/ray_trace.pyx":44
  *             continue
  *         cross_pr_q = pr0*q1 - pr1*q0
  *         t = cross_pr_q / den             # <<<<<<<<<<<<<<
- *         if t < 0:
+ *         if t < 0.0:
  *             dists.append(rmax)
  */
-    if (unlikely(__pyx_v_den == 0)) {
-      #ifdef WITH_THREAD
-      PyGILState_STATE __pyx_gilstate_save = PyGILState_Ensure();
-      #endif
-      PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      #ifdef WITH_THREAD
-      PyGILState_Release(__pyx_gilstate_save);
-      #endif
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 42; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    }
     __pyx_v_t = (__pyx_v_cross_pr_q / __pyx_v_den);
 
-    /* "ray_trace.pyx":43
+    /* "probrob/ray_trace.pyx":45
  *         cross_pr_q = pr0*q1 - pr1*q0
  *         t = cross_pr_q / den
- *         if t < 0:             # <<<<<<<<<<<<<<
+ *         if t < 0.0:             # <<<<<<<<<<<<<<
  *             dists.append(rmax)
  *             # print('wrong side')
  */
     __pyx_t_12 = ((__pyx_v_t < 0.0) != 0);
     if (__pyx_t_12) {
 
-      /* "ray_trace.pyx":44
+      /* "probrob/ray_trace.pyx":46
  *         t = cross_pr_q / den
- *         if t < 0:
+ *         if t < 0.0:
  *             dists.append(rmax)             # <<<<<<<<<<<<<<
  *             # print('wrong side')
  *             continue
  */
-      __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_dists, __pyx_v_rmax); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 44; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_dists, __pyx_v_rmax); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 46; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-      /* "ray_trace.pyx":46
+      /* "probrob/ray_trace.pyx":48
  *             dists.append(rmax)
  *             # print('wrong side')
  *             continue             # <<<<<<<<<<<<<<
@@ -1291,19 +1271,19 @@ static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_sel
       goto __pyx_L5_continue;
     }
 
-    /* "ray_trace.pyx":47
+    /* "probrob/ray_trace.pyx":49
  *             # print('wrong side')
  *             continue
  *         dists.append(t)             # <<<<<<<<<<<<<<
  *         # print('intersection')
  *         # print t
  */
-    __pyx_t_2 = PyFloat_FromDouble(__pyx_v_t); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 47; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyFloat_FromDouble(__pyx_v_t); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_dists, __pyx_t_2); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 47; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_dists, __pyx_t_2); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "ray_trace.pyx":20
+    /* "probrob/ray_trace.pyx":22
  *     x0, y0, phi = pose
  *     s0, s1 = cos(theta + phi), sin(theta + phi)
  *     for edge in edges:             # <<<<<<<<<<<<<<
@@ -1314,28 +1294,28 @@ static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_sel
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "ray_trace.pyx":50
+  /* "probrob/ray_trace.pyx":52
  *         # print('intersection')
  *         # print t
  *     return min(dists)             # <<<<<<<<<<<<<<
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 50; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_INCREF(__pyx_v_dists);
   PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v_dists);
   __Pyx_GIVEREF(__pyx_v_dists);
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_min, __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 50; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_min, __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "ray_trace.pyx":3
- * from math import sin, cos
+  /* "probrob/ray_trace.pyx":5
  * 
+ * @cython.cdivision(True)
  * def ray_trace(edges, pose, theta, rmax):             # <<<<<<<<<<<<<<
  *     ''' Test for intersection of a ray with edges in the map
  * 
@@ -1348,7 +1328,7 @@ static PyObject *__pyx_pf_9ray_trace_ray_trace(CYTHON_UNUSED PyObject *__pyx_sel
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_AddTraceback("ray_trace.ray_trace", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("probrob.ray_trace.ray_trace", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_dists);
@@ -1388,7 +1368,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_dists, __pyx_k_dists, sizeof(__pyx_k_dists), 0, 0, 1, 1},
   {&__pyx_n_s_edge, __pyx_k_edge, sizeof(__pyx_k_edge), 0, 0, 1, 1},
   {&__pyx_n_s_edges, __pyx_k_edges, sizeof(__pyx_k_edges), 0, 0, 1, 1},
-  {&__pyx_kp_s_home_will_projects_probrob_ray, __pyx_k_home_will_projects_probrob_ray, sizeof(__pyx_k_home_will_projects_probrob_ray), 0, 0, 1, 0},
+  {&__pyx_kp_s_home_will_projects_probrob_prob, __pyx_k_home_will_projects_probrob_prob, sizeof(__pyx_k_home_will_projects_probrob_prob), 0, 0, 1, 0},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_n_s_math, __pyx_k_math, sizeof(__pyx_k_math), 0, 0, 1, 1},
@@ -1398,6 +1378,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_pr0, __pyx_k_pr0, sizeof(__pyx_k_pr0), 0, 0, 1, 1},
   {&__pyx_n_s_pr1, __pyx_k_pr1, sizeof(__pyx_k_pr1), 0, 0, 1, 1},
   {&__pyx_n_s_pr_dot_s, __pyx_k_pr_dot_s, sizeof(__pyx_k_pr_dot_s), 0, 0, 1, 1},
+  {&__pyx_n_s_probrob_ray_trace, __pyx_k_probrob_ray_trace, sizeof(__pyx_k_probrob_ray_trace), 0, 0, 1, 1},
   {&__pyx_n_s_q0, __pyx_k_q0, sizeof(__pyx_k_q0), 0, 0, 1, 1},
   {&__pyx_n_s_q1, __pyx_k_q1, sizeof(__pyx_k_q1), 0, 0, 1, 1},
   {&__pyx_n_s_r0, __pyx_k_r0, sizeof(__pyx_k_r0), 0, 0, 1, 1},
@@ -1416,7 +1397,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_min = __Pyx_GetBuiltinName(__pyx_n_s_min); if (!__pyx_builtin_min) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 50; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_min = __Pyx_GetBuiltinName(__pyx_n_s_min); if (!__pyx_builtin_min) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -1426,17 +1407,17 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "ray_trace.pyx":3
- * from math import sin, cos
+  /* "probrob/ray_trace.pyx":5
  * 
+ * @cython.cdivision(True)
  * def ray_trace(edges, pose, theta, rmax):             # <<<<<<<<<<<<<<
  *     ''' Test for intersection of a ray with edges in the map
  * 
  */
-  __pyx_tuple_ = PyTuple_Pack(23, __pyx_n_s_edges, __pyx_n_s_pose, __pyx_n_s_theta, __pyx_n_s_rmax, __pyx_n_s_dists, __pyx_n_s_r0, __pyx_n_s_r1, __pyx_n_s_q0, __pyx_n_s_q1, __pyx_n_s_den, __pyx_n_s_pr0, __pyx_n_s_pr1, __pyx_n_s_cross_pr_s, __pyx_n_s_x0, __pyx_n_s_y0, __pyx_n_s_phi, __pyx_n_s_s0, __pyx_n_s_s1, __pyx_n_s_pr_dot_s, __pyx_n_s_u, __pyx_n_s_cross_pr_q, __pyx_n_s_t, __pyx_n_s_edge); if (unlikely(!__pyx_tuple_)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 3; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple_ = PyTuple_Pack(23, __pyx_n_s_edges, __pyx_n_s_pose, __pyx_n_s_theta, __pyx_n_s_rmax, __pyx_n_s_dists, __pyx_n_s_r0, __pyx_n_s_r1, __pyx_n_s_q0, __pyx_n_s_q1, __pyx_n_s_den, __pyx_n_s_pr0, __pyx_n_s_pr1, __pyx_n_s_cross_pr_s, __pyx_n_s_x0, __pyx_n_s_y0, __pyx_n_s_phi, __pyx_n_s_s0, __pyx_n_s_s1, __pyx_n_s_pr_dot_s, __pyx_n_s_u, __pyx_n_s_cross_pr_q, __pyx_n_s_t, __pyx_n_s_edge); if (unlikely(!__pyx_tuple_)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
-  __pyx_codeobj__2 = (PyObject*)__Pyx_PyCode_New(4, 0, 23, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple_, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_will_projects_probrob_ray, __pyx_n_s_ray_trace, 3, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 3; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_codeobj__2 = (PyObject*)__Pyx_PyCode_New(4, 0, 23, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple_, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_will_projects_probrob_prob, __pyx_n_s_ray_trace, 5, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -1513,14 +1494,14 @@ PyMODINIT_FUNC PyInit_ray_trace(void)
   #if PY_MAJOR_VERSION < 3 && (__PYX_DEFAULT_STRING_ENCODING_IS_ASCII || __PYX_DEFAULT_STRING_ENCODING_IS_DEFAULT)
   if (__Pyx_init_sys_getdefaultencoding_params() < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   #endif
-  if (__pyx_module_is_main_ray_trace) {
+  if (__pyx_module_is_main_probrob__ray_trace) {
     if (PyObject_SetAttrString(__pyx_m, "__name__", __pyx_n_s_main) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   }
   #if PY_MAJOR_VERSION >= 3
   {
     PyObject *modules = PyImport_GetModuleDict(); if (unlikely(!modules)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    if (!PyDict_GetItemString(modules, "ray_trace")) {
-      if (unlikely(PyDict_SetItemString(modules, "ray_trace", __pyx_m) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (!PyDict_GetItemString(modules, "probrob.ray_trace")) {
+      if (unlikely(PyDict_SetItemString(modules, "probrob.ray_trace", __pyx_m) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
   }
   #endif
@@ -1537,12 +1518,13 @@ PyMODINIT_FUNC PyInit_ray_trace(void)
   /*--- Function import code ---*/
   /*--- Execution code ---*/
 
-  /* "ray_trace.pyx":1
+  /* "probrob/ray_trace.pyx":2
+ * import cython
  * from math import sin, cos             # <<<<<<<<<<<<<<
  * 
- * def ray_trace(edges, pose, theta, rmax):
+ * @cython.cdivision(True)
  */
-  __pyx_t_1 = PyList_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyList_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 2; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__pyx_n_s_sin);
   PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_sin);
@@ -1550,35 +1532,35 @@ PyMODINIT_FUNC PyInit_ray_trace(void)
   __Pyx_INCREF(__pyx_n_s_cos);
   PyList_SET_ITEM(__pyx_t_1, 1, __pyx_n_s_cos);
   __Pyx_GIVEREF(__pyx_n_s_cos);
-  __pyx_t_2 = __Pyx_Import(__pyx_n_s_math, __pyx_t_1, -1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_Import(__pyx_n_s_math, __pyx_t_1, -1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 2; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_sin); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_sin); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 2; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_sin, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_sin, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 2; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_cos); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_cos); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 2; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_cos, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_cos, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 2; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "ray_trace.pyx":3
- * from math import sin, cos
+  /* "probrob/ray_trace.pyx":5
  * 
+ * @cython.cdivision(True)
  * def ray_trace(edges, pose, theta, rmax):             # <<<<<<<<<<<<<<
  *     ''' Test for intersection of a ray with edges in the map
  * 
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_9ray_trace_1ray_trace, NULL, __pyx_n_s_ray_trace); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 3; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_7probrob_9ray_trace_1ray_trace, NULL, __pyx_n_s_probrob_ray_trace); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_ray_trace, __pyx_t_2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 3; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_ray_trace, __pyx_t_2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "ray_trace.pyx":1
- * from math import sin, cos             # <<<<<<<<<<<<<<
+  /* "probrob/ray_trace.pyx":1
+ * import cython             # <<<<<<<<<<<<<<
+ * from math import sin, cos
  * 
- * def ray_trace(edges, pose, theta, rmax):
  */
   __pyx_t_2 = PyDict_New(); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
@@ -1593,11 +1575,11 @@ PyMODINIT_FUNC PyInit_ray_trace(void)
   __Pyx_XDECREF(__pyx_t_2);
   if (__pyx_m) {
     if (__pyx_d) {
-      __Pyx_AddTraceback("init ray_trace", __pyx_clineno, __pyx_lineno, __pyx_filename);
+      __Pyx_AddTraceback("init probrob.ray_trace", __pyx_clineno, __pyx_lineno, __pyx_filename);
     }
     Py_DECREF(__pyx_m); __pyx_m = 0;
   } else if (!PyErr_Occurred()) {
-    PyErr_SetString(PyExc_ImportError, "init ray_trace");
+    PyErr_SetString(PyExc_ImportError, "init probrob.ray_trace");
   }
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();

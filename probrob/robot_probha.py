@@ -15,6 +15,7 @@ import ogmap
 import mcl
 import numpy as np
 import random
+import matplotlib.pyplot as plt
 
 
 # noinspection PyMethodOverriding
@@ -34,11 +35,11 @@ class RobotProbHA(robot_prob.RobotProb, robot_ha.RobotHA):
     def control_policy(self):
         return robot_ha.RobotHA.control_policy(self)
 
-    def show_state(self):
-        """
-        Override show_state to disable visualization
-        """
-        pass
+    # def show_state(self):
+    #     """
+    #     Override show_state to disable visualization
+    #     """
+    #     pass
 
 
 def main():
@@ -67,10 +68,10 @@ def main():
     this_robot = RobotProbHA(parameters, this_sonar)
     this_robot.situate(this_map, true_pose, this_goal, this_ens)
 
-    # plt.ion()
-    # fig = plt.figure()
-    # fig.set_size_inches(20,20)
-    # plt.get_current_fig_manager().resize(1000, 1000)
+    plt.ion()
+    fig = plt.figure()
+    fig.set_size_inches(20,20)
+    plt.get_current_fig_manager().resize(1000, 1000)
 
     # print "Robot Running"
     this_robot.automate(num_steps=100)
