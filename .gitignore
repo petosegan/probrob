@@ -11,3 +11,4 @@ scratchwork/
 .idea/
 /dist/
 /*.egg-info
+MANIFEST
