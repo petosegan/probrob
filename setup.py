@@ -20,7 +20,7 @@ class PyTest(Command):
 
 setup(
     name='probrob',
-    version='0.0.2',
+    version='0.0.4',
     packages=['probrob'],
     url='',
     license='',
@@ -29,5 +29,5 @@ setup(
     description='Probabilistic Robotics Simulator',
     requires=['numpy', 'matplotlib', 'scipy', 'Cython'],
     cmdclass={'test': PyTest},
-    ext_modules = [Extension("ray_trace", ["ray_trace.c"])]
+    ext_modules = [Extension("ray_trace", ["probrob/ray_trace.c"])]
 )
