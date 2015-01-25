@@ -15,7 +15,6 @@ import ogmap
 import mcl
 import numpy as np
 import random
-import matplotlib.pyplot as plt
 
 
 # noinspection PyMethodOverriding
@@ -68,7 +67,6 @@ def main():
     this_robot = RobotProbHA(parameters, this_sonar)
     this_robot.situate(this_map, true_pose, this_goal, this_ens)
 
-    plt.ion()
 
     # print "Robot Running"
     this_robot.automate(num_steps=100)

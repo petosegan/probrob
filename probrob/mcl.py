@@ -152,9 +152,9 @@ class Ensemble():
         plt.ylim(-win_size / 10, win_size / 10)
         plt.draw()
 
-    def show(self):
+    def show(self, axes):
         phis = self.x_ens[:, 2]
-        plt.quiver(self.x_ens[:, 0]
+        axes.quiver(self.x_ens[:, 0]
                    , self.x_ens[:, 1]
                    , np.cos(phis)
                    , np.sin(phis)

@@ -34,9 +34,9 @@ class OGMap():
         self.edges = []
         self.rects = []
 
-    def show(self):
+    def show(self, axes):
         """Plot a top down view of the map"""
-        plt.imshow(self.grid
+        axes.imshow(self.grid
                    , interpolation='none'
                    , cmap=cm.Greys_r
                    , origin='lower'

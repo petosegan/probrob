@@ -7,7 +7,7 @@ robot - base class for robot simulator
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 from math import pi, exp, sin, cos
 
-import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 
 import ogmap
 from mapdef import mapdef
@@ -36,7 +36,8 @@ class Robot():
         self.omega_max = self.parameters.omega_max
         self.displacement_slowdown = self.parameters.displacement_slowdown
         self.avoid_threshold = self.parameters.avoid_threshold
-        self.fig, self.ax = plt.subplots()
+        self.fig = Figure()
+        self.ax = self.fig.add_subplot(111)
 
     def situate(self, some_map, pose, goal):
         """
@@ -53,8 +54,8 @@ class Robot():
 
         self.goal_attained = False
         self.crashed = False
-        self.this_map.show()
-        self.goal.show()
+        self.this_map.show(self.ax)
+        self.goal.show(self.ax)
         x0, y0, phi = self.pose
         self.flee_vector_artist = self.ax.quiver(x0, y0, 1, 0, color='r')
         self.pose_dot_artist, = self.ax.plot(x0, y0, 'o', color='g', markersize=10)
@@ -68,16 +69,24 @@ class Robot():
         :param num_steps:
         """
         for step in range(num_steps):
-            if self.goal_attained:
-                print 'GOAL REACHED'
+            state = self.auto_step()
+            if state == "GOAL" or state == "CRASH":
                 break
-            if self.crashed:
-                print 'CRASH!'
-                break
-            self.measure()
-            self.show_state()
-            control_x, control_v = self.control_policy()
-            self.command(control_x, control_v)
+
+
+    def auto_step(self):
+        if self.goal_attained:
+            print 'GOAL REACHED'
+            return "GOAL"
+        if self.crashed:
+            print 'CRASH!'
+            return "CRASH"
+        self.measure()
+        self.show_state()
+        control_x, control_v = self.control_policy()
+        self.command(control_x, control_v)
+        return "CONTINUE"
+
 
     def measure(self):
         """
@@ -94,8 +103,8 @@ class Robot():
         self.show_pose()
         self.show_flee_vector()
         self.show_last_scan()
-        plt.xlim(0, self.this_map.gridsize)
-        plt.ylim(0, self.this_map.gridsize)
+        self.ax.set_xlim(0, self.this_map.gridsize)
+        self.ax.set_ylim(0, self.this_map.gridsize)
 
         self.fig.canvas.flush_events()
 
@@ -209,8 +218,8 @@ class Goal():
         self.location = np.array(location)
         self.radius = radius
 
-    def show(self):
-        plt.plot(self.location[0]
+    def show(self, axes):
+        axes.plot(self.location[0]
                  , self.location[1]
                  , '*'
                  , color='red'
@@ -247,7 +256,6 @@ def main():
                        , this_goal
     )
 
-    plt.ion()
     this_robot.automate()
     if check_success(this_goal, this_robot):
         print "SUCCESS"

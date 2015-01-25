@@ -20,7 +20,7 @@ class PyTest(Command):
 
 setup(
     name='probrob',
-    version='0.0.4',
+    version='0.0.5',
     packages=['probrob'],
     url='',
     license='',
