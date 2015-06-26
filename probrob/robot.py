@@ -8,6 +8,7 @@ robot - base class for robot simulator
 from math import pi, exp, sin, cos
 
 from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 
 import ogmap
 from mapdef import mapdef
@@ -36,7 +37,8 @@ class Robot():
         self.omega_max = self.parameters.omega_max
         self.displacement_slowdown = self.parameters.displacement_slowdown
         self.avoid_threshold = self.parameters.avoid_threshold
-        self.fig = Figure()
+        self.fig = plt.figure()
+        #self.fig.show()
         self.ax = self.fig.add_subplot(111)
 
     def situate(self, some_map, pose, goal):
@@ -60,7 +62,7 @@ class Robot():
         self.flee_vector_artist = self.ax.quiver(x0, y0, 1, 0, color='r')
         self.pose_dot_artist, = self.ax.plot(x0, y0, 'o', color='g', markersize=10)
         self.pose_arrow_artist = self.ax.quiver(x0, y0, x0 * cos(phi), y0 * sin(phi))
-        self.scan_artist, = self.ax.plot([], [], 'o', color='r', markersize=5)
+        self.scan_artist, = self.ax.plot([], [], 'o', color='y', markersize=5)
 
 
     def automate(self, num_steps=100):
@@ -107,6 +109,7 @@ class Robot():
         self.ax.set_ylim(0, self.this_map.gridsize)
 
         self.fig.canvas.flush_events()
+        self.fig.show()
 
     def show_pose(self):
         x0, y0, phi = self.pose
@@ -229,10 +232,10 @@ class Goal():
 
 def main():
     print """Legend:
-        Yellow star\t -\t True position of robot
+        Green circle\t -\t True position of robot
         Blue arrows\t -\t Particle cloud
         Yellow dots\t -\t Sonar pings
-        Green boxes\t -\t Obstacles
+        Black lines\t -\t Obstacles
         Red star\t -\t Goal"""
 
     these_parameters = Parameters(vel_max=1

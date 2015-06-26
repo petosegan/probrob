@@ -47,6 +47,13 @@ def main():
 
     :return:
     """
+    print """Legend:
+        Green circle\t -\t True position of robot
+        Blue arrows\t -\t Particle cloud
+        Yellow dots\t -\t Sonar pings
+        Black lines\t -\t Obstacles
+        Red star\t -\t Goal"""
+
     parameters = robot_prob.ParametersProb()
     this_goal = robot_prob.Goal(location=(random.randrange(20, 80), random.randrange(10, 60), math.pi)
                                 , radius=3)
