@@ -11,7 +11,9 @@ Localization based on rangefinder data and autonomous goal-finding based on a hy
 Usage
 ----------
 Run robot_probha.py to watch the robot navigate to a goal using Monte Carlo 
-Localization.
+Localization. Motion control is based on a hybrid automaton. Yellow dots indicate
+sonar pings, red arrow is the 'flee vector' pointing away from obstacles, and blue
+arrows are the particle cloud.
 
 File List
 -----------
